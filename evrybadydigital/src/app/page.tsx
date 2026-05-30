@@ -7,9 +7,9 @@ export default function Page() {
         <div className="max-w-6xl w-full flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="flex-1 flex flex-col items-start gap-6">
             <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight">
-              Digital Marketing
+              Evrybady Digital
             </h1>
-            <p className="text-2xl text-[#806500] font-medium">Your brand, our strategy — let’s make it happen.</p>
+            <p className="text-2xl text-[#806500] font-medium">Your brand, our strategy.<br /> Let’s make it happen.</p>
             <a href="#contact" className="mt-4 inline-block rounded-full bg-[#806500] text-white px-8 py-3 font-semibold shadow hover:bg-[#a68a2a] transition-colors">Get Started</a>
           </div>
           <div className="flex-1 flex justify-center">
@@ -88,8 +88,8 @@ export default function Page() {
       {/* Contact Section */}
       <section id="contact" className="w-full py-16 px-4 bg-[#806500]/10">
         <div className="max-w-2xl mx-auto flex flex-col items-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#0a1e0a] mb-4">Ready to Grow?</h2>
-          <p className="text-[#806500] mb-8 text-center">Contact us today for a free consultation and let’s build something amazing together.</p>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Let&apos;s Connect</h2>
+          <p className="text-[#806500] mb-8 text-center">Contact us today for a free consultation and let&apos;s build something amazing together.</p>
           <a href="mailto:hello@evrybady.digital" className="inline-block rounded-full bg-[#806500] text-white px-8 py-3 font-semibold shadow hover:bg-[#a68a2a] transition-colors">Contact Us</a>
         </div>
       </section>
