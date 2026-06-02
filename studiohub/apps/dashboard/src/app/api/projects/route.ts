@@ -1,3 +1,5 @@
+import fs from 'fs/promises';
+import path from 'path';
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabaseClient';
 
@@ -43,7 +45,55 @@ export async function GET(req: NextRequest) {
     .order('created_at', { ascending: false });
   if (error) return NextResponse.json({ message: error.message }, { status: 500 });
 
-  return NextResponse.json({ projects: data ?? [] });
+  const projects = data ?? [];
+
+  // Read apps from filesystem
+  let appFolders: string[] = [];
+  try {
+    const appsDir = path.join(process.cwd(), '..');
+    const entries = await fs.readdir(appsDir, { withFileTypes: true });
+    appFolders = entries.filter(e => e.isDirectory() && !e.name.startsWith('.')).map(e => e.name);
+  } catch (e) {
+    console.error('Failed to read apps directory', e);
+  }
+
+  // Auto-insert missing projects for physical folders
+  if (appFolders.length > 0) {
+    const dbProjectNames = new Set(projects.map((p: any) => p.name));
+    const newProjectsToInsert = [];
+
+    for (const folder of appFolders) {
+      if (!dbProjectNames.has(folder)) {
+        newProjectsToInsert.push({
+          owner_id: user.id,
+          name: folder,
+          status: 'active',
+          tags: ['auto-synced'],
+        });
+      }
+    }
+
+    if (newProjectsToInsert.length > 0) {
+      const { data: inserted, error: insertError } = await server
+        .from('projects')
+        .insert(newProjectsToInsert)
+        .select();
+      
+      if (!insertError && inserted) {
+        projects.push(...inserted);
+      }
+    }
+  }
+
+  // Filter to only those matching physical folders
+  const syncedProjects = appFolders.length > 0 
+    ? projects.filter((p: any) => appFolders.includes(p.name))
+    : projects;
+    
+  // Sort them by created_at descending
+  syncedProjects.sort((a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+
+  return NextResponse.json({ projects: syncedProjects });
 }
 
 // POST /api/projects - create a new project

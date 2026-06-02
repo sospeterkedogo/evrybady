@@ -13,15 +13,16 @@ export function useAuth() {
   useEffect(() => {
     mountedRef.current = true;
 
-    supabase?.auth.getSession().then(({ data }) => {
+    supabase?.auth.getSession().then((res: any) => {
       if (!mountedRef.current) return;
-      setSession(data.session ?? null);
-      setUser(data.session?.user ?? null);
+      const data = res?.data;
+      setSession(data?.session ?? null);
+      setUser(data?.session?.user ?? null);
       setLoading(false);
     });
 
     const { data: sub } =
-      supabase?.auth.onAuthStateChange((_event, s) => {
+      supabase?.auth.onAuthStateChange((_event: any, s: any) => {
         if (!mountedRef.current) return;
         setSession(s ?? null);
         setUser(s?.user ?? null);
