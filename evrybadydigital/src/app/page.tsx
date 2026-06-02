@@ -1,58 +1,55 @@
 
+'use client';
+
+import { useSections } from "@/hooks/useSections";
+
 export default function Page() {
+  const { sections, loading, error } = useSections("home");
+  const hero = sections.find((section) => section.section_key === "hero");
+  const cards = sections.filter((section) => section.section_key !== "hero");
+
   return (
     <main className="min-h-screen bg-[#0a1e0a] text-white">
       <section className="relative overflow-hidden">
         <div className="pointer-events-none absolute inset-0 blur-3xl opacity-80" style={{ background: 'radial-gradient(circle at top right, rgba(255,215,0,0.18), transparent 24%)' }} />
         <div className="pointer-events-none absolute inset-y-0 left-0 w-72 bg-linear-to-b from-[#806500]/25 to-transparent blur-3xl opacity-80" />
-        <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 sm:px-8 lg:py-12">
-          <nav className="flex items-center justify-between gap-8 text-sm md:text-base">
-            <div className="font-semibold tracking-[0.28em] text-[#f7e7a6]">EVRYBADY</div>
-            <div className="hidden items-center gap-8 text-white/70 md:flex">
-              <a href="#about" className="hover:text-white">About</a>
-              <a href="#services" className="hover:text-white">Services</a>
-              <a href="#work" className="hover:text-white">Work</a>
-              <a href="#contact" className="hover:text-white">Contact</a>
-            </div>
-          </nav>
-
-          <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center lg:py-16">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 py-8 sm:px-8 lg:py-16">
+          <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
             <div className="space-y-8 max-w-2xl">
               <div className="inline-flex items-center gap-3 rounded-full border border-[#f7e7a6]/30 bg-white/5 px-4 py-2 text-sm text-[#f7e7a6]">
                 <span className="inline-flex h-2.5 w-2.5 rounded-full bg-[#f7e7a6]" />
-                Northamptonshire excellence in digital services
+                Digital marketing & branding for professional service businesses
               </div>
+
               <div className="space-y-5">
                 <h1 className="max-w-3xl text-4xl font-semibold leading-tight text-white sm:text-5xl lg:text-6xl">
-                  Creating success for your business online
+                  {hero?.title ?? "Bold digital growth for professional brands."}
                 </h1>
                 <p className="max-w-xl text-lg leading-8 text-white/75 sm:text-xl">
-                  We are a full-service digital agency that turns ambitious brands into memorable digital experiences. Strategy, design, and marketing crafted to help your business grow.
+                  {hero?.subtitle ?? "A full-service digital agency helping service-based businesses attract clients, build trust, and grow revenue."}
                 </p>
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row">
-                <a href="#work" className="inline-flex items-center justify-center rounded-full bg-[#f7e7a6] px-8 py-3 text-sm font-semibold text-[#0a1e0a] transition hover:bg-white">
+                <a href="/work" className="inline-flex items-center justify-center rounded-full bg-[#f7e7a6] px-8 py-3 text-sm font-semibold text-[#0a1e0a] transition hover:bg-white">
                   View our work
                 </a>
-                <a href="#contact" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-8 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
+                <a href="/contact" className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/5 px-8 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                   Talk to us
                 </a>
               </div>
 
               <div className="grid gap-4 sm:grid-cols-3">
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm">
-                  <p className="font-semibold text-white">Small Business of the Year</p>
-                  <p className="mt-2 text-white/70">Award-winning creative and digital strategy.</p>
-                </div>
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm">
-                  <p className="font-semibold text-white">SEO healthchecks</p>
-                  <p className="mt-2 text-white/70">Actionable insights that improve visibility.</p>
-                </div>
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm">
-                  <p className="font-semibold text-white">Creative & marketing</p>
-                  <p className="mt-2 text-white/70">Design and campaigns built to perform.</p>
-                </div>
+                {(cards.length ? cards.slice(0, 3) : [
+                  { id: "brand", title: "Branding & identity", subtitle: "Logo, visual systems and positioning that build trust." },
+                  { id: "social", title: "Social media growth", subtitle: "Management, content and monetisation for professional brands." },
+                  { id: "seo", title: "Website & SEO", subtitle: "Web development, SEO and lead generation that converts." },
+                ]).map((card) => (
+                  <div key={card.id} className="rounded-3xl border border-white/10 bg-white/5 p-5 text-sm">
+                    <p className="font-semibold text-white">{card.title}</p>
+                    <p className="mt-2 text-white/70">{card.subtitle}</p>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -91,21 +88,27 @@ export default function Page() {
       <section id="about" className="border-b border-white/10 bg-[#08140d] py-20">
         <div className="mx-auto flex max-w-6xl flex-col gap-12 px-6 sm:px-8 lg:px-12 lg:flex-row lg:items-center lg:justify-between">
           <div className="max-w-2xl space-y-5">
-            <p className="text-sm uppercase tracking-[0.4em] text-[#f7e7a6]">As a full-service digital agency</p>
-            <h2 className="text-3xl font-semibold leading-tight text-white sm:text-4xl">We help businesses succeed with creative, marketing and ongoing support.</h2>
+            <p className="text-sm uppercase tracking-[0.4em] text-[#f7e7a6]">Executive summary</p>
+            <h2 className="text-3xl font-semibold leading-tight text-white sm:text-4xl">A modern digital marketing and branding agency for professional services.</h2>
             <p className="text-white/70 leading-8">
-              In a busy online marketplace you need to be a cut above the rest. Our team specialise in memorable design and measurable marketing, working collaboratively to make your business more visible and more trusted.
+              EvryBady Digital & Branding Agency helps professional service businesses build trust, attract clients, and grow revenue with innovative digital branding and marketing solutions.
             </p>
+            <div className="space-y-4 rounded-4xl border border-white/10 bg-white/5 p-6 text-white/80">
+              <p className="font-semibold text-white">Mission</p>
+              <p>To help professional businesses build trust, attract clients, and grow revenue through innovative digital branding and marketing solutions.</p>
+              <p className="font-semibold text-white">Vision</p>
+              <p>To become one of the leading diaspora-owned digital marketing agencies in the UK serving professional service industries.</p>
+            </div>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/80">
-              <p className="font-semibold text-white">Semrush trusted</p>
+              <p className="font-semibold text-white">Social media management</p>
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/80">
-              <p className="font-semibold text-white">Meta partner</p>
+              <p className="font-semibold text-white">Website & SEO services</p>
             </div>
             <div className="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-white/80">
-              <p className="font-semibold text-white">Shopify partner</p>
+              <p className="font-semibold text-white">Branding & lead generation</p>
             </div>
           </div>
         </div>
@@ -122,9 +125,9 @@ export default function Page() {
               <h3 className="text-xl font-semibold text-white">Creative</h3>
               <ul className="space-y-3 text-sm text-white/70">
                 <li>Websites</li>
-                <li>Ecommerce</li>
-                <li>Branding</li>
-                <li>Brochures</li>
+                <li>Brand identity & strategy</li>
+                <li>Corporate profile design</li>
+                <li>Brochures and digital branding assets</li>
                 <li>Creative retainers</li>
               </ul>
             </div>
@@ -134,8 +137,8 @@ export default function Page() {
                 <li>Paid search</li>
                 <li>Organic search</li>
                 <li>Digital performance</li>
-                <li>Social media</li>
-                <li>Video marketing</li>
+                <li>Social media growth</li>
+                <li>Social media monetisation</li>
               </ul>
             </div>
             <div className="space-y-6 rounded-4xl border border-white/10 bg-[#0c2113] p-8 shadow-xl shadow-[#0000002d]">
@@ -145,7 +148,37 @@ export default function Page() {
                 <li>Partnerships</li>
                 <li>SEO healthcheck</li>
                 <li>PPC healthcheck</li>
+                <li>Online reputation management</li>
                 <li>Website healthcheck</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="objectives" className="py-20 bg-[#0b1c14]">
+        <div className="mx-auto max-w-6xl px-6 sm:px-8 lg:px-12">
+          <div className="mb-12 text-center">
+            <p className="text-sm uppercase tracking-[0.4em] text-[#f7e7a6]">Business objectives</p>
+            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">Goals that guide our growth and client success.</h2>
+          </div>
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="rounded-4xl border border-white/10 bg-[#08140d] p-8 text-white/80">
+              <h3 className="text-xl font-semibold text-white">Short-term goals</h3>
+              <ul className="mt-6 space-y-3 text-sm text-white/70">
+                <li>Secure 5–10 clients</li>
+                <li>Build a strong social media presence</li>
+                <li>Generate stable monthly recurring income</li>
+                <li>Develop a portfolio of testimonials</li>
+              </ul>
+            </div>
+            <div className="rounded-4xl border border-white/10 bg-[#08140d] p-8 text-white/80">
+              <h3 className="text-xl font-semibold text-white">Long-term goals</h3>
+              <ul className="mt-6 space-y-3 text-sm text-white/70">
+                <li>Expand into full-service branding consultancy</li>
+                <li>Work with international firms</li>
+                <li>Offer digital courses and consulting</li>
+                <li>Build a remote content creation team</li>
               </ul>
             </div>
           </div>
@@ -251,16 +284,16 @@ export default function Page() {
             <div>
               <p className="font-semibold text-sm text-white">Services</p>
               <ul className="mt-4 space-y-3 text-sm text-white/70">
-                <li><a href="#services" className="hover:text-white">Creative</a></li>
-                <li><a href="#services" className="hover:text-white">Marketing</a></li>
-                <li><a href="#services" className="hover:text-white">Support</a></li>
+                <li><a href="/services" className="hover:text-white">Creative</a></li>
+                <li><a href="/services" className="hover:text-white">Marketing</a></li>
+                <li><a href="/services" className="hover:text-white">Support</a></li>
               </ul>
             </div>
             <div>
               <p className="font-semibold text-sm text-white">Company</p>
               <ul className="mt-4 space-y-3 text-sm text-white/70">
-                <li><a href="#work" className="hover:text-white">Clients & Work</a></li>
-                <li><a href="#contact" className="hover:text-white">Contact</a></li>
+                <li><a href="/work" className="hover:text-white">Clients & Work</a></li>
+                <li><a href="/contact" className="hover:text-white">Contact</a></li>
                 <li><a href="/articles" className="hover:text-white">News & insights</a></li>
               </ul>
             </div>
