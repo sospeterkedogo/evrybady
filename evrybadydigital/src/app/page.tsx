@@ -294,41 +294,7 @@ export default function Page() {
           </div>
         </div>
       </section>
-
-      <footer className="border-t border-white/10 bg-[#0a1e0a] py-8 text-[#f7e7a6]">
-        <div className="mx-auto grid max-w-6xl gap-6 px-5 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-10">
-          <div className="space-y-3">
-            <p className="font-semibold uppercase tracking-[0.32em] text-sm text-[#f7e7a6]">About</p>
-            <p className="max-w-xl text-sm text-white/70">A creative digital agency built for brands that want bold ideas and measurable results.</p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-3">
-            <div>
-              <p className="font-semibold text-sm text-white">Services</p>
-              <ul className="mt-3 space-y-2 text-sm text-white/70">
-                <li><a href="/services" className="hover:text-white">Creative</a></li>
-                <li><a href="/services" className="hover:text-white">Marketing</a></li>
-                <li><a href="/services" className="hover:text-white">Support</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-sm text-white">Company</p>
-              <ul className="mt-3 space-y-2 text-sm text-white/70">
-                <li><a href="/work" className="hover:text-white">Clients & Work</a></li>
-                <li><a href="/contact" className="hover:text-white">Contact</a></li>
-                <li><a href="/articles" className="hover:text-white">News & insights</a></li>
-              </ul>
-            </div>
-            <div>
-              <p className="font-semibold text-sm text-white">Social</p>
-              <ul className="mt-3 space-y-2 text-sm text-white/70">
-                <li><a href="https://www.instagram.com/zincdigital/" target="_blank" rel="noreferrer" className="hover:text-white">Instagram</a></li>
-                <li><a href="https://www.linkedin.com/company/zinc-digital-business-solutions-ltd/" target="_blank" rel="noreferrer" className="hover:text-white">LinkedIn</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div className="mt-6 border-t border-white/10 pt-5 text-center text-sm text-white/50">© {new Date().getFullYear()} Evrybady Digital Creative Marketing Ltd.</div>
-      </footer>
     </main>
   );
 }
+
