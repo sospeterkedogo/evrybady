@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { fetchSections, SectionRecord } from "@/services/sectionService";
 
 const fallbackSections: Record<string, SectionRecord[]> = {
@@ -148,34 +148,35 @@ export function useSections(pageSlug: string) {
   );
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const requestIdRef = useRef(0);
 
   useEffect(() => {
-    let active = true;
-
-    setLoading(true);
-    setError(null);
+    const requestId = ++requestIdRef.current;
 
     fetchSections(pageSlug)
       .then((data) => {
-        if (!active) return;
+        if (requestIdRef.current !== requestId) return;
         if (data.length > 0) {
           setSections(data);
         }
+        setError(null);
       })
       .catch((fetchError) => {
-        if (!active) return;
+        if (requestIdRef.current !== requestId) return;
         setError(fetchError.message ?? "Unable to load page content.");
       })
       .finally(() => {
-        if (active) {
+        if (requestIdRef.current === requestId) {
           setLoading(false);
         }
       });
 
     return () => {
-      active = false;
+      // Incrementing requestIdRef in the next effect run handles cancellation;
+      // no explicit cleanup needed here.
     };
   }, [pageSlug]);
 
   return { sections, loading, error };
 }
+
