@@ -28,7 +28,8 @@ export default function MarkdownEditor({
       </div>
 
       <div className="mt-3 p-3 border rounded bg-white/5 prose max-w-none">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeSanitize]}>{value || ''}</ReactMarkdown>
+        {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+        <ReactMarkdown remarkPlugins={[remarkGfm as any]} rehypePlugins={[rehypeSanitize as any]}>{value || ''}</ReactMarkdown>
       </div>
     </div>
   );

@@ -15,6 +15,7 @@ export default function ImageUploader({ businessId, onUpload }: { businessId: st
     const bucket = 'section-content';
     const path = `${businessId}/${Date.now()}_${file.name.replace(/[^a-zA-Z0-9_.-]/g, '_')}`;
     try {
+      if (!supabase) throw new Error('Client not initialized');
       const { error: upErr } = await supabase.storage.from(bucket).upload(path, file, {cacheControl: '3600', upsert: false});
       if (upErr) throw upErr;
       const { data } = supabase.storage.from(bucket).getPublicUrl(path);

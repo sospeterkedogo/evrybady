@@ -13,6 +13,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
+    if (!supabase) { setMessage('Client not initialized'); setLoading(false); return; }
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) setMessage(error.message);
     else setMessage('Signed in');
@@ -20,7 +21,7 @@ export default function LoginPage() {
   }
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await supabase?.auth.signOut();
     setMessage('Signed out');
   }
 

@@ -19,14 +19,14 @@ export default function AdminPage() {
 
   useEffect(() => {
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase?.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setSession(data.session ?? null);
     });
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s?.session ?? null);
-    });
+    const { data: sub } = supabase?.auth.onAuthStateChange((_event, s) => {
+      setSession(s ?? null);
+    }) ?? { data: null };
 
     return () => {
       mounted = false;
@@ -103,6 +103,12 @@ export default function AdminPage() {
     }));
   }
 
+  /** Safely read a metadata value as a string for input fields */
+  function metaStr(key: string): string {
+    const v = sectionForm.metadata?.[key];
+    return typeof v === 'string' ? v : '';
+  }
+
   // Helpers for structured footer links (array of {label, href})
   function getFooterLinks(): Array<{ label: string; href: string }> {
     const raw = sectionForm.metadata?.links;
@@ -157,14 +163,14 @@ export default function AdminPage() {
     // Optimistic create/update
     setSaving(true);
     const isUpdate = !!sectionForm.id;
-    const tempId = isUpdate ? sectionForm.id : `temp-${Date.now()}`;
+    const tempId = (isUpdate ? sectionForm.id : undefined) ?? `temp-${Date.now()}`;
     const optimistic = { ...sectionForm, id: tempId, business_id: selectedBusiness.id };
     setSections((s) => {
-      if (isUpdate) return s.map((x) => (x.id === optimistic.id ? { ...x, ...optimistic, _saving: true } : x));
-      return [...s, { ...optimistic, _saving: true }];
+      if (isUpdate) return s.map((x) => (x.id === optimistic.id ? { ...x, ...optimistic } as SectionRecord : x));
+      return [...s, optimistic as SectionRecord];
     });
     try {
-      const payload = { section: { ...sectionForm, business_id: selectedBusiness.id } };
+      const payload = { ...sectionForm, business_id: selectedBusiness.id };
       const saved = await upsertSection(payload);
       // replace temp entry with saved data
       setSections((s) => s.map((x) => (x.id === tempId ? saved : x)));
@@ -323,7 +329,7 @@ export default function AdminPage() {
                     {/* Use MarkdownEditor component for editing and preview */}
                     <div className="mt-2">
                       {/* Lazy load client Markdown editor via dynamic import could be added later */}
-                      <MarkdownEditor value={sectionForm.content} onChange={(next) => setSectionForm(s => ({ ...s, content: next }))} businessId={selectedBusiness.id} />
+                      <MarkdownEditor value={sectionForm.content ?? ''} onChange={(next) => setSectionForm(s => ({ ...s, content: next }))} businessId={selectedBusiness.id} />
                     </div>
                   </div>
 
@@ -334,11 +340,11 @@ export default function AdminPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     <label className="block">
                       <span className="text-sm">CTA label</span>
-                      <input value={sectionForm.cta_text} onChange={(e) => setSectionForm(s => ({ ...s, cta_text: e.target.value }))} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                      <input value={sectionForm.cta_text ?? ''} onChange={(e) => setSectionForm(s => ({ ...s, cta_text: e.target.value }))} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                     </label>
                     <label className="block">
                       <span className="text-sm">CTA URL</span>
-                      <input value={sectionForm.cta_url} onChange={(e) => setSectionForm(s => ({ ...s, cta_url: e.target.value }))} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                      <input value={sectionForm.cta_url ?? ''} onChange={(e) => setSectionForm(s => ({ ...s, cta_url: e.target.value }))} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                     </label>
                   </div>
 
@@ -348,55 +354,55 @@ export default function AdminPage() {
                       <div className="grid gap-3 sm:grid-cols-2">
                         <label className="block">
                           <span className="text-sm">Top badge text</span>
-                          <input value={sectionForm.metadata?.label || ''} onChange={(e) => updateMetadata('label', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('label')} onChange={(e) => updateMetadata('label', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Hero image URL</span>
-                          <input value={sectionForm.metadata?.image_url || ''} onChange={(e) => updateMetadata('image_url', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('image_url')} onChange={(e) => updateMetadata('image_url', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Primary CTA label</span>
-                          <input value={sectionForm.metadata?.primary_cta || ''} onChange={(e) => updateMetadata('primary_cta', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('primary_cta')} onChange={(e) => updateMetadata('primary_cta', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Primary CTA href</span>
-                          <input value={sectionForm.metadata?.primary_href || ''} onChange={(e) => updateMetadata('primary_href', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('primary_href')} onChange={(e) => updateMetadata('primary_href', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Secondary CTA label</span>
-                          <input value={sectionForm.metadata?.secondary_cta || ''} onChange={(e) => updateMetadata('secondary_cta', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('secondary_cta')} onChange={(e) => updateMetadata('secondary_cta', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Secondary CTA href</span>
-                          <input value={sectionForm.metadata?.secondary_href || ''} onChange={(e) => updateMetadata('secondary_href', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('secondary_href')} onChange={(e) => updateMetadata('secondary_href', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Feature 1 title</span>
-                          <input value={sectionForm.metadata?.feature_a_title || ''} onChange={(e) => updateMetadata('feature_a_title', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('feature_a_title')} onChange={(e) => updateMetadata('feature_a_title', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Feature 1 detail</span>
-                          <input value={sectionForm.metadata?.feature_a_detail || ''} onChange={(e) => updateMetadata('feature_a_detail', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('feature_a_detail')} onChange={(e) => updateMetadata('feature_a_detail', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Feature 2 title</span>
-                          <input value={sectionForm.metadata?.feature_b_title || ''} onChange={(e) => updateMetadata('feature_b_title', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('feature_b_title')} onChange={(e) => updateMetadata('feature_b_title', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Feature 2 detail</span>
-                          <input value={sectionForm.metadata?.feature_b_detail || ''} onChange={(e) => updateMetadata('feature_b_detail', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('feature_b_detail')} onChange={(e) => updateMetadata('feature_b_detail', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block sm:col-span-2">
                           <span className="text-sm">Featured case study title</span>
-                          <input value={sectionForm.metadata?.featured_name || ''} onChange={(e) => updateMetadata('featured_name', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('featured_name')} onChange={(e) => updateMetadata('featured_name', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block sm:col-span-2">
                           <span className="text-sm">Featured case study description</span>
-                          <input value={sectionForm.metadata?.featured_description || ''} onChange={(e) => updateMetadata('featured_description', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('featured_description')} onChange={(e) => updateMetadata('featured_description', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block sm:col-span-2">
                           <span className="text-sm">Featured badges (comma separated)</span>
-                          <input value={([sectionForm.metadata?.featured_badge_1, sectionForm.metadata?.featured_badge_2, sectionForm.metadata?.featured_badge_3].filter(Boolean) as string[]).join(', ')} onChange={(e) => {
+                          <input value={[metaStr('featured_badge_1'), metaStr('featured_badge_2'), metaStr('featured_badge_3')].filter(Boolean).join(', ')} onChange={(e) => {
                             const [a, b, c] = e.target.value.split(',').map((value) => value.trim());
                             updateMetadata('featured_badge_1', a || '');
                             updateMetadata('featured_badge_2', b || '');
@@ -405,19 +411,19 @@ export default function AdminPage() {
                         </label>
                         <label className="block">
                           <span className="text-sm">Stat 1 value</span>
-                          <input value={sectionForm.metadata?.stat_1 || ''} onChange={(e) => updateMetadata('stat_1', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('stat_1')} onChange={(e) => updateMetadata('stat_1', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Stat 1 label</span>
-                          <input value={sectionForm.metadata?.stat_1_label || ''} onChange={(e) => updateMetadata('stat_1_label', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('stat_1_label')} onChange={(e) => updateMetadata('stat_1_label', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Stat 2 value</span>
-                          <input value={sectionForm.metadata?.stat_2 || ''} onChange={(e) => updateMetadata('stat_2', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('stat_2')} onChange={(e) => updateMetadata('stat_2', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                         <label className="block">
                           <span className="text-sm">Stat 2 label</span>
-                          <input value={sectionForm.metadata?.stat_2_label || ''} onChange={(e) => updateMetadata('stat_2_label', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                          <input value={metaStr('stat_2_label')} onChange={(e) => updateMetadata('stat_2_label', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                         </label>
                       </div>
                     </div>
@@ -429,39 +435,40 @@ export default function AdminPage() {
                         <div className="grid gap-3 sm:grid-cols-2">
                           <label className="block sm:col-span-2">
                             <span className="text-sm">Brand blurb</span>
-                            <input value={sectionForm.metadata?.brand_blurb || ''} onChange={(e) => updateMetadata('brand_blurb', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            <input value={metaStr('brand_blurb')} onChange={(e) => updateMetadata('brand_blurb', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                           </label>
                           <label className="block sm:col-span-2">
                             <span className="text-sm">Address</span>
-                            <input value={sectionForm.metadata?.address || ''} onChange={(e) => updateMetadata('address', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            <input value={metaStr('address')} onChange={(e) => updateMetadata('address', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                           </label>
                           <label className="block">
                             <span className="text-sm">Latitude</span>
-                            <input value={sectionForm.metadata?.lat || ''} onChange={(e) => updateMetadata('lat', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            <input value={metaStr('lat')} onChange={(e) => updateMetadata('lat', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                           </label>
                           <label className="block">
                             <span className="text-sm">Longitude</span>
-                            <input value={sectionForm.metadata?.lon || ''} onChange={(e) => updateMetadata('lon', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            <input value={metaStr('lon')} onChange={(e) => updateMetadata('lon', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                           </label>
+                          <h4 className="mb-2 text-sm font-semibold">Theme & appearance</h4>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                            <label className="block">
+                              <span className="text-sm">Background color</span>
+                              <input value={metaStr('theme_bg')} onChange={(e) => updateMetadata('theme_bg', e.target.value)} placeholder="#0b0b0b or bg class" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            </label>
+                            <label className="block">
+                              <span className="text-sm">Text color</span>
+                              <input value={metaStr('theme_text')} onChange={(e) => updateMetadata('theme_text', e.target.value)} placeholder="#ffffff or text class" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            </label>
+                            <label className="block">
+                              <span className="text-sm">Accent color</span>
+                              <input value={metaStr('accent_color')} onChange={(e) => updateMetadata('accent_color', e.target.value)} placeholder="#f7e7a6" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            </label>
+                          </div>
                           <label className="block sm:col-span-2">
-                            <span className="text-sm">Footer links (label|href, comma separated)</span>
+                            <span className="text-sm">Footer links</span>
                             <div className="space-y-2">
                               {getFooterLinks().map((l, i) => (
-                              <h4 className="mb-2 text-sm font-semibold">Theme & appearance</h4>
-                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
-                                <label className="block">
-                                  <span className="text-sm">Background color</span>
-                                  <input value={(sectionForm.metadata?.theme_bg as string) || ''} onChange={(e) => updateMetadata('theme_bg', e.target.value)} placeholder="#0b0b0b or bg class" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
-                                </label>
-                                <label className="block">
-                                  <span className="text-sm">Text color</span>
-                                  <input value={(sectionForm.metadata?.theme_text as string) || ''} onChange={(e) => updateMetadata('theme_text', e.target.value)} placeholder="#ffffff or text class" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
-                                </label>
-                                <label className="block">
-                                  <span className="text-sm">Accent color</span>
-                                  <input value={(sectionForm.metadata?.accent_color as string) || ''} onChange={(e) => updateMetadata('accent_color', e.target.value)} placeholder="#f7e7a6" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
-                                </label>
-                              </div>
+                                <div key={i} className="flex gap-2 items-center">
                                   <input value={l.label} onChange={(e) => updateFooterLink(i, 'label', e.target.value)} placeholder="Label" className="flex-1 mt-1 border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                                   <input value={l.href} onChange={(e) => updateFooterLink(i, 'href', e.target.value)} placeholder="/path or https://" className="flex-1 mt-1 border rounded px-2 py-2 focus:outline-none focus:ring-2" />
                                   <button type="button" onClick={() => removeFooterLink(i)} className="px-2 py-2 bg-red-600 text-white rounded">Remove</button>

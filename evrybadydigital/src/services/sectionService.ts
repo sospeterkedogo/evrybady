@@ -33,7 +33,7 @@ export async function fetchSections(pageSlug: string) {
 export async function upsertSection(section: Partial<SectionRecord>) {
   // Use server API for writes to enforce RBAC and validation server-side.
   // Include the user's access token so the server can verify the user and enforce RBAC.
-  const session = await supabase.auth.getSession();
+  const session = await supabase?.auth.getSession();
   const token = session?.data?.session?.access_token;
 
   const res = await fetch("/api/sections", {
@@ -51,7 +51,7 @@ export async function upsertSection(section: Partial<SectionRecord>) {
 }
 
 export async function deleteSection(sectionId: string) {
-  const session = await supabase.auth.getSession();
+  const session = await supabase?.auth.getSession();
   const token = session?.data?.session?.access_token;
 
   const res = await fetch(`/api/sections?id=${encodeURIComponent(sectionId)}`, {

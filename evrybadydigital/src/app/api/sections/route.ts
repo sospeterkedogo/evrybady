@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabaseClient';
+import type { SectionRecord } from '@/services/sectionService';
 
 type SectionInput = { 
   section: Partial<SectionRecord>;
@@ -7,7 +8,8 @@ type SectionInput = {
 
 function validateSection(payload: unknown) {
   if (!payload) return 'Missing payload';
-  const s = payload.section ?? payload;
+  const p = payload as Record<string, unknown>;
+  const s = (p.section ?? p) as Record<string, unknown>;
   if (!s) return 'Missing section object';
   if (!s.page_slug || typeof s.page_slug !== 'string') return 'Invalid page_slug';
   if (!s.section_key || typeof s.section_key !== 'string') return 'Invalid section_key';
@@ -17,7 +19,7 @@ function validateSection(payload: unknown) {
     try {
       // basic URL validation
       // allow relative paths as well
-      const u = new URL(s.cta_url, 'http://localhost');
+      const u = new URL(s.cta_url as string, 'http://localhost');
       if (!u) return 'Invalid cta_url';
     } catch (e) {
       return 'Invalid cta_url';
@@ -71,7 +73,7 @@ export async function POST(req: NextRequest) {
   section.owner_id = user.id;
 
   // Upsert the section (server key used - bypasses RLS, but we enforce ownership above)
-  const { data, error } = await server.from('sections').upsert(section, { onConflict: 'id', returning: 'representation' });
+  const { data, error } = await server.from('sections').upsert(section, { onConflict: 'id' }).select();
 
   if (error) {
     return NextResponse.json({ message: error.message || 'Upsert failed' }, { status: 500 });
