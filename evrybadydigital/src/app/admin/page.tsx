@@ -103,6 +103,40 @@ export default function AdminPage() {
     }));
   }
 
+  // Helpers for structured footer links (array of {label, href})
+  function getFooterLinks(): Array<{ label: string; href: string }> {
+    const raw = sectionForm.metadata?.links;
+    if (Array.isArray(raw)) return raw as Array<{ label: string; href: string }>;
+    if (typeof raw === 'string' && raw.trim()) {
+      return raw.split(',').map((l: string) => {
+        const parts = l.split('|').map((p) => p.trim());
+        return { label: parts[0] ?? l, href: parts[1] ?? '#' };
+      });
+    }
+    return [];
+  }
+
+  function setFooterLinks(next: Array<{ label: string; href: string }>) {
+    setSectionForm((s) => ({ ...s, metadata: { ...(s.metadata ?? {}), links: next } }));
+  }
+
+  function addFooterLink() {
+    const current = getFooterLinks();
+    setFooterLinks([...current, { label: 'New link', href: '#' }]);
+  }
+
+  function updateFooterLink(index: number, field: 'label' | 'href', value: string) {
+    const current = getFooterLinks();
+    const next = current.map((l, i) => (i === index ? { ...l, [field]: value } : l));
+    setFooterLinks(next);
+  }
+
+  function removeFooterLink(index: number) {
+    const current = getFooterLinks();
+    const next = current.filter((_, i) => i !== index);
+    setFooterLinks(next);
+  }
+
   function validateSectionForm(f: SectionForm) {
     if (!f.title || f.title.trim().length < 2) return 'Title is required (min 2 chars)';
     if (!f.section_key || f.section_key.trim().length < 1) return 'Section key is required';
@@ -411,7 +445,32 @@ export default function AdminPage() {
                           </label>
                           <label className="block sm:col-span-2">
                             <span className="text-sm">Footer links (label|href, comma separated)</span>
-                            <input value={sectionForm.metadata?.links || ''} onChange={(e) => updateMetadata('links', e.target.value)} className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                            <div className="space-y-2">
+                              {getFooterLinks().map((l, i) => (
+                              <h4 className="mb-2 text-sm font-semibold">Theme & appearance</h4>
+                              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+                                <label className="block">
+                                  <span className="text-sm">Background color</span>
+                                  <input value={(sectionForm.metadata?.theme_bg as string) || ''} onChange={(e) => updateMetadata('theme_bg', e.target.value)} placeholder="#0b0b0b or bg class" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                                </label>
+                                <label className="block">
+                                  <span className="text-sm">Text color</span>
+                                  <input value={(sectionForm.metadata?.theme_text as string) || ''} onChange={(e) => updateMetadata('theme_text', e.target.value)} placeholder="#ffffff or text class" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                                </label>
+                                <label className="block">
+                                  <span className="text-sm">Accent color</span>
+                                  <input value={(sectionForm.metadata?.accent_color as string) || ''} onChange={(e) => updateMetadata('accent_color', e.target.value)} placeholder="#f7e7a6" className="mt-1 w-full border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                                </label>
+                              </div>
+                                  <input value={l.label} onChange={(e) => updateFooterLink(i, 'label', e.target.value)} placeholder="Label" className="flex-1 mt-1 border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                                  <input value={l.href} onChange={(e) => updateFooterLink(i, 'href', e.target.value)} placeholder="/path or https://" className="flex-1 mt-1 border rounded px-2 py-2 focus:outline-none focus:ring-2" />
+                                  <button type="button" onClick={() => removeFooterLink(i)} className="px-2 py-2 bg-red-600 text-white rounded">Remove</button>
+                                </div>
+                              ))}
+                              <div className="pt-2">
+                                <button type="button" onClick={addFooterLink} className="px-3 py-2 bg-[#f7e7a6] text-[#0a1e0a] rounded">Add link</button>
+                              </div>
+                            </div>
                           </label>
                         </div>
                       </div>

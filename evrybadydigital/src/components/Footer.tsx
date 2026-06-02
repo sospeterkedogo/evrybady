@@ -23,27 +23,49 @@ export default function Footer() {
   }, []);
 
   const meta = footer?.metadata ?? {};
-  const brand = (meta.brand_blurb as string) || footer?.title || 'EvryBady — digital branding & marketing';
-  const address = (meta.address as string) || '';
+  const brand = String(meta.brand_blurb ?? footer?.title ?? 'EvryBady — digital branding & marketing');
+  const address = String(meta.address ?? '');
   const lat = Number(meta.lat) || 52.2405; // fallback coords
   const lon = Number(meta.lon) || -0.9027;
-  const linksRaw = (meta.links as string) || '';
 
-  const links = linksRaw
-    ? linksRaw.split(',').map((l: string) => {
-        const parts = l.split('|').map((p) => p.trim());
-        return { label: parts[0] ?? l, href: parts[1] ?? '#' };
-      })
-    : [
-        { label: 'Home', href: '/' },
-        { label: 'Work', href: '/work' },
-        { label: 'Services', href: '/services' },
-        { label: 'About', href: '/about' },
-        { label: 'Contact', href: '/contact' },
-      ];
+  // Resolve links: support structured array or legacy comma string
+  let rawLinks: Array<{ label: string; href: string }> = [];
+  if (Array.isArray(meta.links)) {
+    rawLinks = (meta.links as Array<{ label: string; href: string }>).map((l) => ({ label: String(l.label ?? ''), href: String(l.href ?? '#') }));
+  } else if (typeof meta.links === 'string' && meta.links.trim()) {
+    rawLinks = (meta.links as string).split(',').map((l) => {
+      const parts = l.split('|').map((p) => p.trim());
+      return { label: parts[0] ?? l, href: parts[1] ?? '#' };
+    });
+  } else {
+    rawLinks = [
+      { label: 'Home', href: '/' },
+      { label: 'Work', href: '/work' },
+      { label: 'Services', href: '/services' },
+      { label: 'About', href: '/about' },
+      { label: 'Contact', href: '/contact' },
+    ];
+  }
+
+  // Deduplicate by href, keep first occurrence
+  const seen = new Set<string>();
+  const links = rawLinks.filter((l) => {
+    if (!l.href) return false;
+    if (seen.has(l.href)) return false;
+    seen.add(l.href);
+    return true;
+  });
+
+  // Theme styles: support hex colors in metadata
+  const themeBg = typeof meta.theme_bg === 'string' ? meta.theme_bg : '';
+  const themeText = typeof meta.theme_text === 'string' ? meta.theme_text : '';
+  const accent = typeof meta.accent_color === 'string' ? meta.accent_color : '';
+  const style: React.CSSProperties = {};
+  if (themeBg && /^#|rgb\(|rgba\(/i.test(themeBg)) style.backgroundColor = themeBg;
+  if (themeText && /^#|rgb\(|rgba\(/i.test(themeText)) style.color = themeText;
 
   return (
-    <footer className="mt-16 border-t border-white/6 bg-linear-to-t from-transparent to-black/10 text-white/90">
+    <footer className="mt-16 border-t border-white/6 bg-linear-to-t from-transparent to-black/10 text-white/90" style={style}>
       <div className="mx-auto max-w-7xl px-6 py-12 sm:px-8 lg:px-12">
         <div className="grid gap-8 lg:grid-cols-3 lg:items-start">
           <div className="space-y-4">
@@ -55,9 +77,9 @@ export default function Footer() {
           <div className="grid gap-3 sm:grid-cols-2 lg:col-span-1">
             <div>
               <h4 className="text-sm font-semibold">Navigation</h4>
-              <ul className="mt-2 space-y-2 text-sm text-white/70">
+              <ul className="mt-2 space-y-2 text-sm" style={{ color: themeText || undefined }}>
                 {links.map((link) => (
-                  <li key={link.href}><a className="transition hover:text-white" href={link.href}>{link.label}</a></li>
+                  <li key={link.href}><a className="transition" style={{ color: themeText || undefined }} href={link.href}><span style={{ color: accent || undefined }}>{link.label}</span></a></li>
                 ))}
               </ul>
             </div>
