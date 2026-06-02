@@ -4,6 +4,8 @@ import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import Sidebar from '@/components/Sidebar';
+import { ShellProvider } from '@/components/ShellContext';
+import { ThemeProvider } from '@/components/ThemeContext';
 import ToastContainer from '@/components/Toast';
 import type { Toast } from '@/types';
 
@@ -32,7 +34,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0e1a]">
+      <div className="flex min-h-screen items-center justify-center" style={{ background: 'var(--bg-primary)' }}>
         <div className="h-8 w-8 rounded-full border-2 border-white/10 border-t-[#3b82f6]" style={{ animation: 'spin 0.8s linear infinite' }} />
       </div>
     );
@@ -41,19 +43,35 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (!session) return null;
 
   return (
-    <div className="flex min-h-screen bg-[#0a0e1a]">
-      <Sidebar userEmail={user?.email} onSignOut={handleSignOut} />
+    <ThemeProvider>
+      <ShellProvider>
+        {/* Ambient background effects */}
+        <div className="studio-grid-bg" />
+        <div className="studio-glow studio-glow--tl" />
+        <div className="studio-glow studio-glow--br" />
 
-      {/* Main content — offset by sidebar width */}
-      <main className="ml-[240px] flex-1 min-h-screen transition-[margin] duration-300">
-        {/* Pass pushToast via a data attribute pattern — children access it through context or props */}
-        <DashboardContext.Provider value={{ pushToast }}>
-          {children}
-        </DashboardContext.Provider>
-      </main>
+        <div style={{ display: 'flex', minHeight: '100vh', position: 'relative', zIndex: 1 }}>
+          <Sidebar userEmail={user?.email} onSignOut={handleSignOut} />
 
-      <ToastContainer toasts={toasts} onDismiss={dismissToast} />
-    </div>
+          {/* Main content — offset by sidebar width */}
+          <main
+            className="main-content"
+            style={{
+              marginLeft: 'var(--sidebar-w)',
+              flex: 1,
+              minHeight: '100vh',
+              transition: 'margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+            }}
+          >
+            <DashboardContext.Provider value={{ pushToast }}>
+              {children}
+            </DashboardContext.Provider>
+          </main>
+        </div>
+
+        <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+      </ShellProvider>
+    </ThemeProvider>
   );
 }
 

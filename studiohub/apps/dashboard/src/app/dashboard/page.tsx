@@ -17,7 +17,7 @@ export default function DashboardOverview() {
 
   return (
     <div>
-      <TopBar title="Overview" userEmail={user?.email} />
+      <TopBar />
 
       <div className="p-6 space-y-8">
         {/* Welcome */}
