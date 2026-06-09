@@ -37,7 +37,7 @@ Create `studiohub/.env.local` and/or `studiohub/apps/dashboard/.env.local` with:
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 - `SUPABASE_SERVICE_ROLE_KEY` (server routes, seeding)
 
-Apply SQL migrations from `studiohub/supabase_migrations/` in the Supabase dashboard.
+Apply SQL migrations from `studiohub/supabase_migrations/` in the Supabase dashboard (in order). If project CRUD fails with `projects_org_id_fkey`, run `20260609_organizations.sql` to create `organizations` / `organization_members` and backfill `projects.org_id`.
 
 ## Cursor Cloud specific instructions
 
