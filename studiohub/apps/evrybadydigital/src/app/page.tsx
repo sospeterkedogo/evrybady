@@ -282,6 +282,7 @@ export default function Page() {
                 <p className="text-sm uppercase tracking-[0.4em] text-brand">Talk to us about your project</p>
                 <h2 className="text-3xl font-semibold sm:text-4xl">Start your next digital chapter with Evrybady.</h2>
                 <p className="max-w-2xl text-lg text-white/70 leading-8">Book a consultation to discuss websites, marketing, branding or ongoing support that helps your business grow.</p>
+                <a href="/booking" className="inline-flex rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface transition hover:bg-white">Book your free call</a>
               </div>
               <div className="space-y-4 rounded-xl border border-white/10 bg-surface p-6">
                 <a href="mailto:hello@evrybady.digital" className="block rounded-full bg-brand px-6 py-4 text-center text-sm font-semibold text-surface">Email us</a>

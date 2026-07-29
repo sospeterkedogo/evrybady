@@ -92,7 +92,7 @@ export default function Footer() {
             <ul className="space-y-2 text-sm text-white/65">
               <li><a href="mailto:hello@evrybady.digital" className="hover:text-white transition">hello@evrybady.digital</a></li>
               <li><a href="tel:+441604598999" className="hover:text-white transition">01604 59 89 99</a></li>
-              <li className="pt-1"><a href="/contact" className="inline-flex rounded-full bg-brand px-4 py-2 text-xs font-semibold text-surface transition hover:bg-white">Book a consultation</a></li>
+              <li className="pt-1"><a href="/booking" className="inline-flex rounded-full bg-brand px-4 py-2 text-xs font-semibold text-surface transition hover:bg-white">Book a consultation</a></li>
             </ul>
           </div>
         </div>
