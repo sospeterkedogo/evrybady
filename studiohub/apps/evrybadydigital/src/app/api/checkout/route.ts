@@ -22,34 +22,40 @@ export async function POST(request: Request) {
 
     const feeGbp = Number(process.env.NEXT_PUBLIC_BOOKING_FEE_GBP ?? 5000);
     const origin = request.headers.get('origin') || 'http://localhost:3000';
-    const stripe = getStripeClient();
+    const paymentLinkUrl = process.env.STRIPE_PAYMENT_LINK_URL || 'https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000';
 
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ['card'],
-      mode: 'payment',
-      customer_email: email,
-      line_items: [
-        {
-          price_data: {
-            currency: 'gbp',
-            product_data: {
-              name: `Consultation Booking — ${service}`,
-              description: `Booking fee for a ${service} consultation with Evrybady Digital.`,
+    let checkoutUrl = paymentLinkUrl;
+
+    if (!process.env.STRIPE_PAYMENT_LINK_URL && process.env.STRIPE_SECRET_KEY) {
+      const stripe = getStripeClient();
+      const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        mode: 'payment',
+        customer_email: email,
+        line_items: [
+          {
+            price_data: {
+              currency: 'gbp',
+              product_data: {
+                name: `Consultation Booking — ${service}`,
+                description: `Booking fee for a ${service} consultation with Evrybady Digital.`,
+              },
+              unit_amount: feeGbp,
             },
-            unit_amount: feeGbp,
+            quantity: 1,
           },
-          quantity: 1,
+        ],
+        success_url: `${origin}/booking/confirmation?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${origin}/booking?cancelled=1`,
+        metadata: {
+          service,
+          name,
+          phone: phone ?? '',
+          message: message ?? '',
         },
-      ],
-      success_url: `${origin}/booking/confirmation?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}/booking?cancelled=1`,
-      metadata: {
-        service,
-        name,
-        phone: phone ?? '',
-        message: message ?? '',
-      },
-    });
+      });
+      checkoutUrl = session.url || checkoutUrl;
+    }
 
     await sendEmail({
       to: 'evrybadydigital@gmail.com',
