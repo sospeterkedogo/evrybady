@@ -81,7 +81,7 @@ export default function Page() {
         <div className="relative z-10 mx-auto w-full max-w-7xl px-6 py-16 sm:px-8 lg:py-24">
           <div className="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
             <div className="space-y-8 max-w-2xl">
-              <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-sm text-brand/80 backdrop-blur-sm">
+              <div className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-white/[0.03] px-4 py-2 text-sm text-brand-dark backdrop-blur-sm">
                 <span className="inline-flex h-1.5 w-1.5 rounded-full bg-brand shadow-lg shadow-brand/50" />
                 {label}
               </div>
@@ -131,10 +131,10 @@ export default function Page() {
                       We combine brand strategy, creative design, and performance marketing to build visibility and drive measurable revenue for our clients.
                     </p>
                     <div className="mt-6 flex flex-wrap gap-2">
-                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand/80">Branding</span>
-                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand/80">Web Design</span>
-                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand/80">SEO</span>
-                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand/80">Social</span>
+                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand-dark">Branding</span>
+                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand-dark">Web Design</span>
+                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand-dark">SEO</span>
+                      <span className="rounded-full border border-brand/20 bg-brand/[0.06] px-3 py-1.5 text-xs text-brand-dark">Social</span>
                     </div>
                   </div>
                 </div>
@@ -281,7 +281,7 @@ export default function Page() {
                   <p className="mt-3 text-sm leading-7 text-white/70">{project.description}</p>
                   <div className="mt-6 flex flex-wrap gap-2">
                     {project.tags.map((tag) => (
-                      <span key={tag} className="rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5 text-xs text-brand/80">
+                      <span key={tag} className="rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5 text-xs text-brand-dark">
                         {tag}
                       </span>
                     ))}

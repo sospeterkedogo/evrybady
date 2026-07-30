@@ -259,7 +259,7 @@ function BookingContent() {
                   )}
                   <h3 className="text-lg font-semibold text-white pr-16">{svc.name}</h3>
                   <p className="mt-3 text-sm leading-7 text-white/60">{svc.description}</p>
-                  <p className="mt-4 text-sm font-medium text-brand/80">{svc.priceRange}</p>
+                  <p className="mt-4 text-sm font-medium text-brand-dark">{svc.priceRange}</p>
                   {isActive && (
                     <span className="absolute left-4 top-4 h-2.5 w-2.5 rounded-full bg-brand shadow-lg shadow-brand/50" />
                   )}
@@ -334,7 +334,7 @@ function BookingContent() {
                   <p className="text-sm uppercase tracking-[0.3em] text-white/40">Selected service</p>
                   <h3 className="mt-3 text-xl font-semibold text-white">{selectedService?.name}</h3>
                   <p className="mt-2 text-sm text-white/60">{selectedService?.description}</p>
-                  <p className="mt-4 text-sm font-medium text-brand/80">{selectedService?.priceRange}</p>
+                  <p className="mt-4 text-sm font-medium text-brand-dark">{selectedService?.priceRange}</p>
 
                   {!isFree && (
                     <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.03] p-5">

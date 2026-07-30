@@ -385,7 +385,7 @@ export default function SocialHooksPage() {
 
                 {/* Platform guidance */}
                 {selectedPlatform && (
-                  <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 text-sm text-white/80 space-y-1">
+                  <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 text-sm text-brand-dark space-y-1">
                     <p><span className="font-medium text-brand">{platformInfo[selectedPlatform].label}</span> — {platformInfo[selectedPlatform].description}</p>
                     <p className="text-xs text-white/50">Character limit: ~{platformInfo[selectedPlatform].charLimit.toLocaleString()} · Optimal: {platformInfo[selectedPlatform].optimal}</p>
                     {platformTips[selectedPlatform]?.tip && (

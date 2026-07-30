@@ -53,7 +53,7 @@ export default function WorkPage() {
                 <p className="mt-3 text-sm leading-7 text-white/70">{project.description}</p>
                 <div className="mt-6 flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
-                    <span key={tag} className="rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5 text-xs text-brand/80">
+                    <span key={tag} className="rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5 text-xs text-brand-dark">
                       {tag}
                     </span>
                   ))}
