@@ -107,6 +107,8 @@ function BookingContent() {
     return `£${gbp}`;
   };
 
+  const stripePaymentLink = process.env.NEXT_PUBLIC_STRIPE_PAYMENT_LINK_URL || 'https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000';
+
   async function handleCheckout() {
     if (!selectedService || !name.trim() || !email.trim()) {
       setError('Please select a service and fill in your name and email.');
@@ -123,7 +125,7 @@ function BookingContent() {
     }
 
     try {
-      const res = await fetch('/api/checkout', {
+      await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -135,15 +137,7 @@ function BookingContent() {
         }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || 'Something went wrong. Please try again.');
-        setLoading(false);
-        return;
-      }
-
-      window.location.href = data.url;
+      window.location.href = stripePaymentLink;
     } catch {
       setError('Network error. Please try again.');
       setLoading(false);
