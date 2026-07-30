@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getStripeClient } from '@/lib/stripe';
+import { sendEmail } from '@/lib/email';
 
 export async function POST(request: Request) {
   try {
@@ -48,6 +49,22 @@ export async function POST(request: Request) {
         phone: phone ?? '',
         message: message ?? '',
       },
+    });
+
+    await sendEmail({
+      to: 'evrybadydigital@gmail.com',
+      replyTo: email,
+      subject: `New consultation booking request: ${service}`,
+      html: `<h2>New consultation booking</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone ?? 'Not provided'}</p><p><strong>Service:</strong> ${service}</p><p><strong>Message:</strong> ${message ?? 'No additional details provided'}</p>`,
+      text: `New consultation booking\nName: ${name}\nEmail: ${email}\nPhone: ${phone ?? 'Not provided'}\nService: ${service}\nMessage: ${message ?? 'No additional details provided'}`,
+    });
+
+    await sendEmail({
+      to: email,
+      replyTo: 'evrybadydigital@gmail.com',
+      subject: 'Your consultation booking request has been received',
+      html: `<p>Hi ${name},</p><p>Thanks for booking a consultation with Evrybady Digital. Your payment session is ready and we have received your request.</p><p>Please visit our services page here: <a href="https://evrybady.digital/services">https://evrybady.digital/services</a></p><p>Best regards,<br />Evrybady Digital</p>`,
+      text: `Hi ${name},\n\nThanks for booking a consultation with Evrybady Digital. Your payment session is ready and we have received your request.\n\nPlease visit our services page here: https://evrybady.digital/services\n\nBest regards,\nEvrybady Digital`,
     });
 
     return NextResponse.json({ url: session.url });

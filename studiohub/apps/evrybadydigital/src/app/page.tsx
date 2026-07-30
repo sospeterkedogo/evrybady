@@ -1,10 +1,14 @@
 
 'use client';
 
+import { useState } from 'react';
 import { useSections } from "@/hooks/useSections";
 
 export default function Page() {
-  const { sections, loading, error } = useSections("home");
+  const { sections } = useSections("home");
+  const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [newsletterStatus, setNewsletterStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [newsletterMessage, setNewsletterMessage] = useState('');
   const hero = sections.find((section) => section.section_key === "hero");
   const cards = sections.filter((section) => section.section_key !== "hero");
 
@@ -15,6 +19,33 @@ export default function Page() {
   const primaryHref = String(hero?.metadata?.primary_href ?? "/work");
   const secondaryCta = String(hero?.metadata?.secondary_cta ?? "Talk to us");
   const secondaryHref = String(hero?.metadata?.secondary_href ?? "/contact");
+
+  async function handleNewsletterSignup(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNewsletterStatus('sending');
+    setNewsletterMessage('');
+
+    try {
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: newsletterEmail }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to sign up right now.');
+      }
+
+      setNewsletterStatus('success');
+      setNewsletterMessage('Thanks for signing up. We will be in touch soon.');
+      setNewsletterEmail('');
+    } catch (error) {
+      setNewsletterStatus('error');
+      setNewsletterMessage(error instanceof Error ? error.message : 'Unable to sign up right now.');
+    }
+  }
+
   return (
     <main className="min-h-screen bg-surface text-white">
 
@@ -263,12 +294,15 @@ export default function Page() {
                 <h2 className="text-3xl font-semibold text-white sm:text-4xl">Get great content, tips and news straight to your inbox.</h2>
                 <p className="max-w-xl text-lg text-white/70 leading-8">Every month, we send the inside scoop on the digital landscape so you stay ahead of the competition.</p>
               </div>
-              <form className="grid gap-4 sm:grid-cols-[1fr_auto]">
+              <form onSubmit={handleNewsletterSignup} className="grid gap-4 sm:grid-cols-[1fr_auto]">
                 <label className="sr-only" htmlFor="newsletter-email">Email address</label>
-                <input id="newsletter-email" type="email" placeholder="Your email address" className="min-w-0 rounded-full border border-white/10 bg-surface px-6 py-4 text-white outline-none placeholder:text-white/40" />
-                <button type="submit" className="rounded-full bg-brand px-8 py-4 text-sm font-semibold text-surface transition hover:bg-white">Sign up</button>
+                <input id="newsletter-email" type="email" placeholder="Your email address" value={newsletterEmail} onChange={(event) => setNewsletterEmail(event.target.value)} className="min-w-0 rounded-full border border-white/10 bg-surface px-6 py-4 text-white outline-none placeholder:text-white/40" />
+                <button type="submit" disabled={newsletterStatus === 'sending'} className="rounded-full bg-brand px-8 py-4 text-sm font-semibold text-surface transition hover:bg-white disabled:opacity-70">{newsletterStatus === 'sending' ? 'Signing up...' : 'Sign up'}</button>
               </form>
             </div>
+            {newsletterMessage ? (
+              <p className={`mt-4 text-sm ${newsletterStatus === 'success' ? 'text-brand' : 'text-rose-300'}`}>{newsletterMessage}</p>
+            ) : null}
           </div>
         </div>
       </section>
@@ -285,7 +319,7 @@ export default function Page() {
                 <a href="/booking" className="inline-flex rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface transition hover:bg-white">Book your free call</a>
               </div>
               <div className="space-y-4 rounded-xl border border-white/10 bg-surface p-6">
-                <a href="mailto:hello@evrybady.digital" className="block rounded-full bg-brand px-6 py-4 text-center text-sm font-semibold text-surface">Email us</a>
+                <a href="mailto:evrybadydigital@gmail.com" className="block rounded-full bg-brand px-6 py-4 text-center text-sm font-semibold text-surface">Email us</a>
                 <div className="rounded-xl bg-white/5 p-5 text-sm text-white/75">
                   <p className="font-medium text-white">Phone</p>
                   <p className="mt-2">01604 59 89 99</p>

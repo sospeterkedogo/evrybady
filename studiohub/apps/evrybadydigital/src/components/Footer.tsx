@@ -38,11 +38,11 @@ export default function Footer() {
             <p className="text-sm text-white/60 leading-6 max-w-xs">{brand}</p>
             {address && <p className="text-xs text-white/45">{address}</p>}
             <div className="flex items-center gap-3 pt-1">
-              <a href="https://www.instagram.com/zincdigital/" target="_blank" rel="noreferrer" className="text-white/50 hover:text-brand transition" aria-label="Instagram">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg>
-              </a>
-              <a href="https://www.linkedin.com/company/zinc-digital-business-solutions-ltd/" target="_blank" rel="noreferrer" className="text-white/50 hover:text-brand transition" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/in/evrybady-digital-aaa701420/" target="_blank" rel="noreferrer" className="text-white/50 hover:text-brand transition" aria-label="LinkedIn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              </a>
+              <a href="https://x.com/Evrybadydigital" target="_blank" rel="noreferrer" className="text-white/50 hover:text-brand transition" aria-label="X">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
               </a>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function Footer() {
           <div>
             <p className="font-semibold text-xs uppercase tracking-[0.2em] text-brand mb-3">Get in touch</p>
             <ul className="space-y-2 text-sm text-white/65">
-              <li><a href="mailto:hello@evrybady.digital" className="hover:text-white transition">hello@evrybady.digital</a></li>
+              <li><a href="mailto:evrybadydigital@gmail.com" className="hover:text-white transition">evrybadydigital@gmail.com</a></li>
               <li><a href="tel:+441604598999" className="hover:text-white transition">01604 59 89 99</a></li>
               <li className="pt-1"><a href="/booking" className="inline-flex rounded-full bg-brand px-4 py-2 text-xs font-semibold text-surface transition hover:bg-white">Book a consultation</a></li>
             </ul>

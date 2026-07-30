@@ -1,30 +1,58 @@
-import React from "react";
+'use client';
 
-// Dummy articles data
-const articles = [
-  {
-    id: 1,
-    title: "Welcome to Evrybady Digital",
-    date: "2026-05-30",
-    content: "Discover our latest updates and strategies for your brand.",
-    comments: [
-      { user: "Jane", text: "Great article!" },
-      { user: "John", text: "Very insightful." },
-    ],
-    reactions: { like: 5, love: 2 },
-  },
-  {
-    id: 2,
-    title: "How to Grow Your Brand Online",
-    date: "2026-05-28",
-    content: "Tips and tricks for digital growth in 2026.",
-    comments: [],
-    reactions: { like: 2, love: 1 },
-  },
-];
+import { useEffect, useState } from 'react';
+
+type Article = {
+  id: string;
+  title: string;
+  date: string;
+  content: string;
+  comments: Array<{ user: string; text: string }>;
+  reactions: { like: number; love: number };
+};
 
 export default function ArticlesPage() {
-  // Sort articles by latest
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [title, setTitle] = useState('');
+  const [content, setContent] = useState('');
+  const [status, setStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [message, setMessage] = useState('');
+
+  useEffect(() => {
+    fetch('/api/articles')
+      .then((response) => response.json())
+      .then((data) => setArticles(Array.isArray(data) ? data : []))
+      .catch(() => setArticles([]));
+  }, []);
+
+  async function handleCreateArticle(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setStatus('saving');
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/articles', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, content }),
+      });
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Unable to publish article.');
+      }
+
+      setArticles((current) => [data, ...current]);
+      setTitle('');
+      setContent('');
+      setStatus('success');
+      setMessage('Article published.');
+    } catch (error) {
+      setStatus('error');
+      setMessage(error instanceof Error ? error.message : 'Unable to publish article.');
+    }
+  }
+
   const sortedArticles = [...articles].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
@@ -36,6 +64,19 @@ export default function ArticlesPage() {
           <div>
             <p className="text-sm uppercase tracking-[0.4em] text-brand">News & insights</p>
             <h1 className="mt-4 text-4xl font-bold text-white sm:text-5xl">Articles</h1>
+          </div>
+        </section>
+
+        <section className="pb-8">
+          <div className="rounded-2xl border border-white/10 bg-surface-alt p-6">
+            <h2 className="text-xl font-semibold text-white">Publish an article</h2>
+            <p className="mt-2 text-sm text-white/60">Share a new update with your audience.</p>
+            <form onSubmit={handleCreateArticle} className="mt-6 space-y-4">
+              <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Article title" className="w-full rounded-xl border border-white/10 bg-surface px-4 py-3 text-white outline-none placeholder:text-white/40" />
+              <textarea value={content} onChange={(event) => setContent(event.target.value)} rows={5} placeholder="Write your article here..." className="w-full rounded-xl border border-white/10 bg-surface px-4 py-3 text-white outline-none placeholder:text-white/40" />
+              <button type="submit" disabled={status === 'saving'} className="rounded-full bg-brand px-6 py-3 text-sm font-semibold text-surface disabled:opacity-70">{status === 'saving' ? 'Publishing...' : 'Publish article'}</button>
+            </form>
+            {message ? <p className={`mt-3 text-sm ${status === 'success' ? 'text-brand' : 'text-rose-300'}`}>{message}</p> : null}
           </div>
         </section>
 
