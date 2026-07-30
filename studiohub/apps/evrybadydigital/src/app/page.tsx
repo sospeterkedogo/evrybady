@@ -96,10 +96,10 @@ export default function Page() {
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row">
-                <a href={primaryHref} className="inline-flex items-center justify-center rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_18px_45px_rgba(247,231,166,0.18)] transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_50px_rgba(247,231,166,0.24)]">
+                <a href={primaryHref} className="inline-flex min-h-[48px] items-center justify-center rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_18px_45px_rgba(247,231,166,0.18)] transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_50px_rgba(247,231,166,0.24)]">
                   {primaryCta}
                 </a>
-                <a href={secondaryHref} className="inline-flex items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.04] px-8 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10">
+                <a href={secondaryHref} className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-white/[0.16] bg-white/[0.06] px-8 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-white/30 hover:bg-white/12">
                   {secondaryHref === "/contact" ? "Get in touch" : secondaryCta}
                 </a>
               </div>

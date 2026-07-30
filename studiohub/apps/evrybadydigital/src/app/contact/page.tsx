@@ -36,17 +36,17 @@ export default function ContactPage() {
               <form className="mt-8 space-y-5">
                 <div>
                   <label htmlFor="contact-name" className="sr-only">Your name</label>
-                  <input id="contact-name" type="text" placeholder="Your name" className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none" />
+                  <input id="contact-name" type="text" placeholder="Your name" className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50" />
                 </div>
                 <div>
                   <label htmlFor="contact-email" className="sr-only">Your email</label>
-                  <input id="contact-email" type="email" placeholder="Your email" className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none" />
+                  <input id="contact-email" type="email" placeholder="Your email" className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50" />
                 </div>
                 <div>
                   <label htmlFor="contact-details" className="sr-only">Project details</label>
-                  <textarea id="contact-details" placeholder="Project details" rows={6} className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none" />
+                  <textarea id="contact-details" placeholder="Project details" rows={6} className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50" />
                 </div>
-                <button type="submit" className="inline-flex rounded-full bg-brand px-8 py-4 text-sm font-semibold text-surface transition hover:bg-white">
+                <button type="submit" className="inline-flex min-h-[48px] rounded-full bg-brand px-8 py-4 text-sm font-semibold text-surface shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition hover:bg-white hover:shadow-[0_12px_30px_rgba(247,231,166,0.16)]">
                   Send request
                 </button>
               </form>

@@ -246,7 +246,7 @@ function BookingContent() {
                     setFreeSubmitted(false);
                     setError(null);
                   }}
-                  className={`group relative rounded-2xl border p-7 text-left transition ${
+                  className={`group relative min-h-[148px] rounded-2xl border p-7 text-left transition ${
                     isActive
                       ? 'border-brand/50 bg-brand/[0.08] shadow-lg shadow-brand/10'
                       : 'border-white/10 bg-surface hover:border-white/20 hover:bg-surface-card'
@@ -290,7 +290,7 @@ function BookingContent() {
                       placeholder="Your name"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/40"
+                      className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50"
                     />
                   </div>
                   <div>
@@ -301,7 +301,7 @@ function BookingContent() {
                       placeholder="Your email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/40"
+                      className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50"
                     />
                   </div>
                   <div>
@@ -312,7 +312,7 @@ function BookingContent() {
                       placeholder="Phone number (optional)"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/40"
+                      className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50"
                     />
                   </div>
                   <div>
@@ -323,7 +323,7 @@ function BookingContent() {
                       rows={4}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
-                      className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/40"
+                      className="w-full min-h-[52px] rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none placeholder:text-white/50 focus:border-brand/50"
                     />
                   </div>
                 </div>
@@ -359,7 +359,7 @@ function BookingContent() {
                   type="button"
                   onClick={handleCheckout}
                   disabled={loading}
-                  className="w-full rounded-full bg-brand px-8 py-4 text-sm font-semibold text-surface transition hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full min-h-[52px] rounded-full bg-brand px-8 py-4 text-sm font-semibold text-surface shadow-[0_0_0_1px_rgba(255,255,255,0.08)] transition hover:bg-white hover:shadow-[0_14px_32px_rgba(247,231,166,0.16)] disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading
                     ? 'Redirecting...'

@@ -23,16 +23,58 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
+  overflow-x: hidden;
   background:
     radial-gradient(circle at top left, rgba(247, 231, 166, 0.12), transparent 28%),
     linear-gradient(135deg, #050b08 0%, #0a1a12 45%, #08120d 100%);
-  color: var(--color-brand);
+  color: #fdfcf7;
   font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.6;
 }
 
 ::selection {
   background: rgba(247, 231, 166, 0.35);
   color: #fffdf4;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  min-height: 44px;
+}
+
+button,
+a,
+input,
+textarea,
+select {
+  transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(247, 231, 166, 0.95);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 a {
