@@ -1,6 +1,7 @@
 
 'use client';
 
+import Image from 'next/image';
 import { useState } from 'react';
 import { useSections } from "@/hooks/useSections";
 
@@ -19,6 +20,30 @@ export default function Page() {
   const primaryHref = String(hero?.metadata?.primary_href ?? "/work");
   const secondaryCta = String(hero?.metadata?.secondary_cta ?? "Talk to us");
   const secondaryHref = String(hero?.metadata?.secondary_href ?? "/contact");
+
+  const featuredProjects = [
+    {
+      title: 'Espeezy Apps Ltd',
+      category: 'Product design & mobile UX',
+      description: 'A high-conversion app experience crafted to help fast-moving teams simplify service delivery and close more opportunities.',
+      image: '/images/case-studies/espeezy-apps-ltd.svg',
+      tags: ['Product strategy', 'UI systems', 'Mobile-first'],
+    },
+    {
+      title: 'Lukara Adventures',
+      category: 'Brand storytelling & travel experience',
+      description: 'An immersive travel brand concept designed to spark curiosity, build trust, and turn inspiration into action.',
+      image: '/images/case-studies/lukara-adventures.svg',
+      tags: ['Brand direction', 'Visual storytelling', 'Landing experience'],
+    },
+    {
+      title: 'Ronald Onyango',
+      category: 'Personal brand & thought leadership',
+      description: 'A polished digital presence that elevates authority, sharpens messaging, and attracts high-value conversations.',
+      image: '/images/case-studies/ronald-onyango.svg',
+      tags: ['Personal brand', 'Content design', 'Premium positioning'],
+    },
+  ];
 
   async function handleNewsletterSignup(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -71,10 +96,10 @@ export default function Page() {
               </div>
 
               <div className="flex flex-col gap-4 sm:flex-row">
-                <a href={primaryHref} className="inline-flex items-center justify-center rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface shadow-lg shadow-brand/20 transition hover:bg-white hover:shadow-xl hover:shadow-white/10">
+                <a href={primaryHref} className="inline-flex items-center justify-center rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface shadow-[0_0_0_1px_rgba(255,255,255,0.08),0_18px_45px_rgba(247,231,166,0.18)] transition hover:-translate-y-0.5 hover:bg-white hover:shadow-[0_20px_50px_rgba(247,231,166,0.24)]">
                   {primaryCta}
                 </a>
-                <a href={secondaryHref} className="inline-flex items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.04] px-8 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:border-white/25 hover:bg-white/10">
+                <a href={secondaryHref} className="inline-flex items-center justify-center rounded-full border border-white/[0.12] bg-white/[0.04] px-8 py-3 text-sm font-semibold text-white backdrop-blur-sm transition hover:-translate-y-0.5 hover:border-white/25 hover:bg-white/10">
                   {secondaryHref === "/contact" ? "Get in touch" : secondaryCta}
                 </a>
               </div>
@@ -97,7 +122,7 @@ export default function Page() {
               <div className="absolute -right-16 top-4 h-72 w-72 rounded-full bg-brand/10 blur-3xl" />
               <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-brand/5 blur-3xl" />
               <div className="relative grid gap-5">
-                <div className="group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-gradient-to-br from-white/[0.04] to-transparent p-8 shadow-2xl shadow-black/20 backdrop-blur-sm transition hover:border-white/[0.12]">
+                <div className="group relative overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-gradient-to-br from-white/[0.06] to-transparent p-8 shadow-[0_24px_70px_rgba(0,0,0,0.24)] backdrop-blur-sm transition hover:border-white/[0.15]">
                   <div className="absolute inset-0 bg-gradient-to-br from-brand/[0.03] to-transparent opacity-0 transition group-hover:opacity-100" />
                   <div className="relative">
                     <span className="text-xs uppercase tracking-[0.3em] text-white/40">Our approach</span>
@@ -235,26 +260,35 @@ export default function Page() {
       {/* ── Work ── */}
       <section id="work" className="flex min-h-screen items-center bg-surface-alt py-24 lg:py-32">
         <div className="mx-auto w-full max-w-6xl px-6 sm:px-8 lg:px-12">
-          <div className="mb-14 text-center">
+          <div className="mb-14 max-w-3xl">
             <p className="text-sm uppercase tracking-[0.4em] text-brand">Clients & work</p>
-            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">We work with leading companies locally and nationally.</h2>
+            <h2 className="mt-4 text-3xl font-semibold text-white sm:text-4xl">Premium digital experiences designed to earn trust and drive action.</h2>
+            <p className="mt-4 text-lg leading-8 text-white/70">Each project is shaped with a bold visual language, clear positioning, and conversion-focused design to attract high-quality clients.</p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
-            <article className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 transition hover:-translate-y-1 hover:bg-white/10">
-              <p className="text-xs uppercase tracking-[0.36em] text-brand">Case study</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Rose Gallery</h3>
-              <p className="mt-3 text-sm leading-7 text-white/70">A fine art gallery website that reached top SEO positions and drove direct sales.</p>
-            </article>
-            <article className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 transition hover:-translate-y-1 hover:bg-white/10">
-              <p className="text-xs uppercase tracking-[0.36em] text-brand">Case study</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Dragon Drilling</h3>
-              <p className="mt-3 text-sm leading-7 text-white/70">Bespoke site build and training to support a busy operational team.</p>
-            </article>
-            <article className="group overflow-hidden rounded-2xl border border-white/10 bg-white/5 p-8 transition hover:-translate-y-1 hover:bg-white/10">
-              <p className="text-xs uppercase tracking-[0.36em] text-brand">Case study</p>
-              <h3 className="mt-4 text-2xl font-semibold text-white">Client growth</h3>
-              <p className="mt-3 text-sm leading-7 text-white/70">Digital performance and advertising campaigns that deliver a measurable return.</p>
-            </article>
+          <div className="grid gap-6 xl:grid-cols-3">
+            {featuredProjects.map((project) => (
+              <article key={project.title} className="group overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-2xl shadow-black/20 transition duration-300 hover:-translate-y-2 hover:border-brand/30 hover:bg-white/[0.07]">
+                <div className="relative aspect-[4/3] overflow-hidden">
+                  <Image src={project.image} alt={`${project.title} illustration`} fill className="object-cover transition duration-700 group-hover:scale-105" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/10 to-transparent" />
+                  <div className="absolute left-5 top-5 rounded-full border border-white/15 bg-surface/70 px-3 py-1 text-[10px] uppercase tracking-[0.34em] text-brand backdrop-blur-sm">
+                    Case study
+                  </div>
+                </div>
+                <div className="p-8">
+                  <p className="text-sm font-medium text-brand">{project.category}</p>
+                  <h3 className="mt-3 text-2xl font-semibold text-white">{project.title}</h3>
+                  <p className="mt-3 text-sm leading-7 text-white/70">{project.description}</p>
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {project.tags.map((tag) => (
+                      <span key={tag} className="rounded-full border border-brand/20 bg-brand/[0.08] px-3 py-1.5 text-xs text-brand/80">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>

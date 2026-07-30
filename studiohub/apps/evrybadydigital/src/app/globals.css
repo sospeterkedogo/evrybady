@@ -23,9 +23,16 @@ html {
 body {
   margin: 0;
   min-height: 100vh;
-  background: var(--color-surface-alt);
+  background:
+    radial-gradient(circle at top left, rgba(247, 231, 166, 0.12), transparent 28%),
+    linear-gradient(135deg, #050b08 0%, #0a1a12 45%, #08120d 100%);
   color: var(--color-brand);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: rgba(247, 231, 166, 0.35);
+  color: #fffdf4;
 }
 
 a {
