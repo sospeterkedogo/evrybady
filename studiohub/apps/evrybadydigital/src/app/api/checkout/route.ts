@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
+import { getStripeClient } from '@/lib/stripe';
 
 export async function POST(request: Request) {
   try {
@@ -21,6 +21,7 @@ export async function POST(request: Request) {
 
     const feeGbp = Number(process.env.NEXT_PUBLIC_BOOKING_FEE_GBP ?? 5000);
     const origin = request.headers.get('origin') || 'http://localhost:3000';
+    const stripe = getStripeClient();
 
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
