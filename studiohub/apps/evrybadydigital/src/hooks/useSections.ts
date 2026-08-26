@@ -136,7 +136,7 @@ const fallbackSections: Record<string, SectionRecord[]> = {
       page_slug: "contact",
       section_key: "details",
       title: "Contact details",
-      subtitle: "Email hello@evrybady.digital or call 01604 59 89 99 to start your next project.",
+      subtitle: "Email hello@evrybady.digital or call 0203 740 4890 to start your next project.",
       position: 1,
     },
   ],

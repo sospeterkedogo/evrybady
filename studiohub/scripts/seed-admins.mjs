@@ -78,24 +78,47 @@ async function seed() {
       auth: { autoRefreshToken: false, persistSession: false },
     });
 
+    async function resolveUserId(email) {
+      const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      if (error) return null;
+      const match = data?.users?.find((u) => u.email?.toLowerCase() === email.toLowerCase());
+      return match?.id ?? null;
+    }
+
     for (const admin of ADMINS) {
+      const role = admin.role || "admin";
       const { data, error } = await supabase.auth.admin.createUser({
         email: admin.email,
         password: admin.password,
         email_confirm: true,
-        user_metadata: { role: "admin" },
+        user_metadata: { role },
+        app_metadata: { role },
       });
+
+      let userId = data?.user?.id ?? null;
 
       if (error) {
         if (error.message.toLowerCase().includes("already") ||
             error.message.toLowerCase().includes("exists") ||
             error.message.toLowerCase().includes("duplicate")) {
           console.log(`⏭  ${admin.email} already exists`);
+          userId = await resolveUserId(admin.email);
         } else {
           console.error(`❌  ${admin.email}: ${error.message}`);
         }
       } else {
         console.log(`✅  Created ${admin.email}  (id: ${data.user.id})`);
+      }
+
+      // Ensure the user_roles row reflects the intended role (idempotent)
+      if (userId) {
+        await supabase
+          .from("user_roles")
+          .upsert({ user_id: userId, role }, { onConflict: "user_id" })
+          .then(() => console.log(`🔑  Set role "${role}" for ${admin.email}`))
+          .catch((err) => console.warn(`⚠  user_roles not updated for ${admin.email}: ${err.message}`));
+      } else {
+        console.warn(`⚠  Could not resolve id for ${admin.email} — user_roles not updated`);
       }
     }
   } else {

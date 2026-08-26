@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { fetchSections, SectionRecord } from '@/services/sectionService';
 
@@ -24,24 +25,51 @@ export default function Footer() {
 
   const year = new Date().getFullYear();
 
+  const servicesLinks = [
+    'Websites',
+    'Brand identity & strategy',
+    'Social media management',
+    'SEO & organic search',
+    'Paid search & PPC',
+    'Lead generation',
+    'Creative retainers',
+  ];
+
+  const companyLinks = [
+    { label: 'About us', href: '/about' },
+    { label: 'Clients & work', href: '/work' },
+    { label: 'News & insights', href: '/articles' },
+    { label: 'Contact', href: '/contact' },
+    { label: 'Consultancy', href: '/services' },
+    { label: 'Partnerships', href: '/services' },
+  ];
+
+  const resourceLinks = [
+    { label: 'SEO healthcheck', href: '/services' },
+    { label: 'PPC healthcheck', href: '/services' },
+    { label: 'Website healthcheck', href: '/services' },
+    { label: 'Reputation management', href: '/services' },
+    { label: 'Blog', href: '/articles' },
+  ];
+
   return (
-    <footer className="mt-8 border-t border-white/10 bg-surface-footer text-white/90">
-      <div className="mx-auto max-w-7xl px-5 pt-10 pb-6 sm:px-6 lg:px-10">
+    <footer className="mt-8 border-t border-gray-200 bg-surface-footer text-ink">
+      <div className="mx-auto max-w-7xl px-5 pt-16 pb-8 sm:px-6 lg:px-10">
         {/* Top row: brand + link columns */}
-        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr_1fr_1fr_1fr] md:grid-cols-[1.4fr_1fr_1fr_1fr] sm:grid-cols-2">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr_1fr] md:grid-cols-[1.4fr_1fr_1fr_1fr] sm:grid-cols-2">
           {/* Brand column */}
-          <div className="space-y-3 sm:col-span-2 md:col-span-1 lg:col-span-1">
+          <div className="space-y-4 sm:col-span-2 md:col-span-1 lg:col-span-1">
             <div className="flex items-center gap-2">
               <img src="/LOGO.png" alt="EvryBady logo" className="h-8 w-auto rounded object-contain" />
               <span className="font-semibold tracking-[0.16em] text-brand text-sm">EVRYBADY</span>
             </div>
-            <p className="text-sm text-white/60 leading-6 max-w-xs">{brand}</p>
-            {address && <p className="text-xs text-white/45">{address}</p>}
+            <p className="text-sm text-ink-muted leading-6 max-w-xs">{brand}</p>
+            {address && <p className="text-xs text-ink-faint">{address}</p>}
             <div className="flex items-center gap-3 pt-1">
-              <a href="https://www.linkedin.com/in/evrybady-digital-aaa701420/" target="_blank" rel="noreferrer" className="text-white/50 hover:text-brand transition" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/in/evrybady-digital-aaa701420/" target="_blank" rel="noreferrer" className="text-ink-muted hover:text-brand transition" aria-label="LinkedIn">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               </a>
-              <a href="https://x.com/Evrybadydigital" target="_blank" rel="noreferrer" className="text-white/50 hover:text-brand transition" aria-label="X">
+              <a href="https://x.com/Evrybadydigital" target="_blank" rel="noreferrer" className="text-ink-muted hover:text-brand transition" aria-label="X">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>
               </a>
             </div>
@@ -49,63 +77,59 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-brand mb-3">Services</p>
-            <ul className="space-y-2 text-sm text-white/65">
-              <li><a href="/services" className="hover:text-white transition">Websites</a></li>
-              <li><a href="/services" className="hover:text-white transition">Brand identity & strategy</a></li>
-              <li><a href="/services" className="hover:text-white transition">Social media management</a></li>
-              <li><a href="/services" className="hover:text-white transition">SEO & organic search</a></li>
-              <li><a href="/services" className="hover:text-white transition">Paid search & PPC</a></li>
-              <li><a href="/services" className="hover:text-white transition">Lead generation</a></li>
-              <li><a href="/services" className="hover:text-white transition">Creative retainers</a></li>
+            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-ink mb-4">Services</p>
+            <ul className="space-y-3 text-sm text-ink-muted">
+              {servicesLinks.map((label) => (
+                <li key={label}><Link href="/services" className="hover:text-brand transition">{label}</Link></li>
+              ))}
             </ul>
           </div>
 
           {/* Company */}
           <div>
-            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-brand mb-3">Company</p>
-            <ul className="space-y-2 text-sm text-white/65">
-              <li><a href="/about" className="hover:text-white transition">About us</a></li>
-              <li><a href="/work" className="hover:text-white transition">Clients & work</a></li>
-              <li><a href="/articles" className="hover:text-white transition">News & insights</a></li>
-              <li><a href="/contact" className="hover:text-white transition">Contact</a></li>
-              <li><a href="/services" className="hover:text-white transition">Consultancy</a></li>
-              <li><a href="/services" className="hover:text-white transition">Partnerships</a></li>
+            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-ink mb-4">Company</p>
+            <ul className="space-y-3 text-sm text-ink-muted">
+              {companyLinks.map((l) => (
+                <li key={l.label}><Link href={l.href} className="hover:text-brand transition">{l.label}</Link></li>
+              ))}
             </ul>
           </div>
 
           {/* Resources */}
           <div>
-            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-brand mb-3">Resources</p>
-            <ul className="space-y-2 text-sm text-white/65">
-              <li><a href="/services" className="hover:text-white transition">SEO healthcheck</a></li>
-              <li><a href="/services" className="hover:text-white transition">PPC healthcheck</a></li>
-              <li><a href="/services" className="hover:text-white transition">Website healthcheck</a></li>
-              <li><a href="/services" className="hover:text-white transition">Reputation management</a></li>
-              <li><a href="/articles" className="hover:text-white transition">Blog</a></li>
+            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-ink mb-4">Resources</p>
+            <ul className="space-y-3 text-sm text-ink-muted">
+              {resourceLinks.map((l) => (
+                <li key={l.label}><Link href={l.href} className="hover:text-brand transition">{l.label}</Link></li>
+              ))}
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-brand mb-3">Get in touch</p>
-            <ul className="space-y-2 text-sm text-white/65">
-              <li><a href="mailto:evrybadydigital@gmail.com" className="hover:text-white transition">evrybadydigital@gmail.com</a></li>
-              <li><a href="tel:+441604598999" className="hover:text-white transition">01604 59 89 99</a></li>
-              <li className="pt-1"><a href="/booking" className="inline-flex rounded-full bg-brand px-4 py-2 text-xs font-semibold text-surface transition hover:bg-white">Book a consultation</a></li>
+            <p className="font-semibold text-xs uppercase tracking-[0.2em] text-ink mb-4">Get in touch</p>
+            <ul className="space-y-3 text-sm text-ink-muted">
+              <li><a href="mailto:evrybadydigital@gmail.com" className="hover:text-brand transition">evrybadydigital@gmail.com</a></li>
+              <li><a href="tel:+442037404890" className="hover:text-brand transition">0203 740 4890</a></li>
+              <li className="pt-2"><Link href="/booking" className="inline-flex rounded-full bg-brand px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-brand-dark">Book a consultation</Link></li>
             </ul>
           </div>
         </div>
 
         {/* Legal links bar */}
-        <div className="mt-8 border-t border-white/8 pt-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-xs text-white/40">© {year} Evrybady Digital Creative Marketing Ltd. All rights reserved.</p>
-          <nav className="flex flex-wrap gap-x-5 gap-y-1 text-xs text-white/45">
-            <a href="/terms" className="hover:text-white/70 transition">Terms of Service</a>
-            <a href="/privacy" className="hover:text-white/70 transition">Privacy Policy</a>
-            <a href="/cookies" className="hover:text-white/70 transition">Cookie Policy</a>
-            <a href="/disclaimer" className="hover:text-white/70 transition">Disclaimer</a>
+        <div className="mt-14 border-t border-gray-200 pt-7 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-xs text-ink-faint">© {year} Evrybady Digital Creative Marketing Ltd. All rights reserved.</p>
+          <nav aria-label="Legal" className="flex flex-wrap gap-x-6 gap-y-2 text-xs text-ink-faint">
+            <Link href="/terms" className="hover:text-brand transition">Terms of Service</Link>
+            <Link href="/privacy" className="hover:text-brand transition">Privacy Policy</Link>
+            <Link href="/cookies" className="hover:text-brand transition">Cookie Policy</Link>
+            <Link href="/disclaimer" className="hover:text-brand transition">Disclaimer</Link>
           </nav>
+        </div>
+
+        {/* Company registration */}
+        <div className="mt-6 border-t border-gray-200 pt-5 text-xs text-ink-faint">
+          <p>Evrybady Digital Creative Marketing Ltd · Registered in England &amp; Wales · SIC 70229 — Management consultancy activities</p>
         </div>
       </div>
     </footer>

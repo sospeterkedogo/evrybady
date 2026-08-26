@@ -1,28 +1,41 @@
 import { NextResponse } from 'next/server';
 import { getStripeClient } from '@/lib/stripe';
-import { sendEmail } from '@/lib/email';
+
+function toServices(services: unknown, service: unknown): string[] {
+  if (Array.isArray(services) && services.length > 0) {
+    return services.map((s) => String(s)).filter(Boolean);
+  }
+  if (service) return [String(service)];
+  return [];
+}
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { name, email, phone, service, message } = body as {
+    const { name, email, phone, services, service, message } = body as {
       name: string;
       email: string;
       phone: string;
-      service: string;
+      services?: string[];
+      service?: string;
       message?: string;
     };
 
-    if (!name || !email || !service) {
+    const selectedServices = toServices(services, service);
+
+    if (!name || !email || selectedServices.length === 0) {
       return NextResponse.json(
-        { error: 'Name, email, and service are required.' },
+        { error: 'Name, email, and at least one service are required.' },
         { status: 400 },
       );
     }
 
-    const feeGbp = Number(process.env.NEXT_PUBLIC_BOOKING_FEE_GBP ?? 5000);
+    const feeGbp = Number(process.env.NEXT_PUBLIC_BOOKING_FEE_GBP ?? 10000);
     const origin = request.headers.get('origin') || 'http://localhost:3000';
     const paymentLinkUrl = process.env.STRIPE_PAYMENT_LINK_URL || 'https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000';
+    const serviceLabel = selectedServices.join(', ');
+    const cleanPhone = phone?.trim() || 'Not provided';
+    const cleanMessage = message?.trim() || 'No additional details provided';
 
     let checkoutUrl = paymentLinkUrl;
 
@@ -37,8 +50,8 @@ export async function POST(request: Request) {
             price_data: {
               currency: 'gbp',
               product_data: {
-                name: `Consultation Booking — ${service}`,
-                description: `Booking fee for a ${service} consultation with Evrybady Digital.`,
+                name: 'Onboarding Consultation with Evrybady Digital',
+                description: `Consultation booking fee. Services of interest: ${serviceLabel}.`,
               },
               unit_amount: feeGbp,
             },
@@ -48,32 +61,16 @@ export async function POST(request: Request) {
         success_url: `${origin}/booking/confirmation?session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${origin}/booking?cancelled=1`,
         metadata: {
-          service,
+          services: serviceLabel,
           name,
-          phone: phone ?? '',
-          message: message ?? '',
+          phone: cleanPhone,
+          message: cleanMessage,
         },
       });
       checkoutUrl = session.url || checkoutUrl;
     }
 
-    await sendEmail({
-      to: 'evrybadydigital@gmail.com',
-      replyTo: email,
-      subject: `New consultation booking request: ${service}`,
-      html: `<h2>New consultation booking</h2><p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Phone:</strong> ${phone ?? 'Not provided'}</p><p><strong>Service:</strong> ${service}</p><p><strong>Message:</strong> ${message ?? 'No additional details provided'}</p>`,
-      text: `New consultation booking\nName: ${name}\nEmail: ${email}\nPhone: ${phone ?? 'Not provided'}\nService: ${service}\nMessage: ${message ?? 'No additional details provided'}`,
-    });
-
-    await sendEmail({
-      to: email,
-      replyTo: 'evrybadydigital@gmail.com',
-      subject: 'Your consultation booking request has been received',
-      html: `<p>Hi ${name},</p><p>Thanks for booking a consultation with Evrybady Digital. Your payment session is ready and we have received your request.</p><p>Please visit our services page here: <a href="https://evrybady.digital/services">https://evrybady.digital/services</a></p><p>Best regards,<br />Evrybady Digital</p>`,
-      text: `Hi ${name},\n\nThanks for booking a consultation with Evrybady Digital. Your payment session is ready and we have received your request.\n\nPlease visit our services page here: https://evrybady.digital/services\n\nBest regards,\nEvrybady Digital`,
-    });
-
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: checkoutUrl });
   } catch (err) {
     console.error('Stripe checkout error:', err);
     return NextResponse.json(

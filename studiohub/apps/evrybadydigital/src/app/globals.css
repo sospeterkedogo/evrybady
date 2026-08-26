@@ -1,13 +1,17 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-brand: #f7e7a6;
-  --color-brand-dark: #3c2f00;
-  --color-surface: #0a1e0a;
-  --color-surface-alt: #08140d;
-  --color-surface-card: #0c2113;
-  --color-surface-objectives: #0b1c14;
-  --color-surface-footer: #071209;
+  --color-brand: #15803d;
+  --color-brand-dark: #166534;
+  --color-brand-soft: #e6f4ea;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f7f6f1;
+  --color-surface-card: #ffffff;
+  --color-surface-objectives: #f1efe7;
+  --color-surface-footer: #f7f6f1;
+  --color-ink: #1c281c;
+  --color-ink-muted: #475a47;
+  --color-ink-faint: #5f705f;
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -24,17 +28,15 @@ body {
   margin: 0;
   min-height: 100vh;
   overflow-x: hidden;
-  background:
-    radial-gradient(circle at top left, rgba(247, 231, 166, 0.12), transparent 28%),
-    linear-gradient(135deg, #050b08 0%, #0a1a12 45%, #08120d 100%);
-  color: #fdfcf7;
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: #1c281c;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
   line-height: 1.6;
 }
 
 ::selection {
-  background: rgba(247, 231, 166, 0.35);
-  color: #fffdf4;
+  background: rgba(21, 128, 61, 0.9);
+  color: #ffffff;
 }
 
 button,
@@ -58,7 +60,7 @@ a:focus-visible,
 input:focus-visible,
 textarea:focus-visible,
 select:focus-visible {
-  outline: 2px solid rgba(247, 231, 166, 0.95);
+  outline: 2px solid #15803d;
   outline-offset: 2px;
 }
 

@@ -1,15 +1,19 @@
 'use client';
 
 import { useEffect, useState, useRef } from 'react';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { upsertSection, deleteSection as deleteSectionSvc } from '@/services/sectionService';
 import type { SectionRecord } from '@/services/sectionService';
 import type { Session } from '@supabase/supabase-js';
 import MarkdownToasts from '@/components/Toasts';
 import SectionForm from '@/components/SectionForm';
+import BookingsManager from '@/components/BookingsManager';
+import { useRole } from '@/hooks/useRole';
 import type { Business, SectionFormState, Toast } from '@/types';
 
 export default function AdminPage() {
+  const { isStaff, roleLoading } = useRole();
   const [session, setSession] = useState<Session | null>(null);
   const [businesses, setBusinesses] = useState<Business[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,18 +24,18 @@ export default function AdminPage() {
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
   const [sections, setSections] = useState<SectionRecord[]>([]);
   const [selectedPage, setSelectedPage] = useState('home');
-  const [sectionForm, setSectionForm] = useState<SectionFormState>({ 
-    title: '', page_slug: 'home', section_key: '', subtitle: '', content: '', position: 0, cta_text: '', cta_url: '', metadata: {} 
+  const [sectionForm, setSectionForm] = useState<SectionFormState>({
+    title: '', page_slug: 'home', section_key: '', subtitle: '', content: '', position: 0, cta_text: '', cta_url: '', metadata: {}
   });
   const [formError, setFormError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [toasts, setToasts] = useState<Toast[]>([]);
-  
+
   const mountedRef = useRef(true);
 
   useEffect(() => {
     mountedRef.current = true;
-    
+
     supabase?.auth.getSession().then(({ data }) => {
       if (!mountedRef.current) return;
       setSession(data.session ?? null);
@@ -76,8 +80,8 @@ export default function AdminPage() {
     setLoading(true);
     try {
       const token = session?.access_token;
-      const res = await fetch(`/api/sections?business_id=${encodeURIComponent(bizId)}`, { 
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined 
+      const res = await fetch(`/api/sections?business_id=${encodeURIComponent(bizId)}`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined
       });
       const json = await res.json();
       if (res.ok) setSections(json.sections ?? []);
@@ -104,7 +108,7 @@ export default function AdminPage() {
     if (!f.section_key || f.section_key.trim().length < 1) return 'Section key is required';
     if (!f.page_slug || f.page_slug.trim().length < 1) return 'Page slug is required';
     if (f.position != null && isNaN(Number(f.position))) return 'Position must be a number';
-    
+
     if (f.cta_url && f.cta_url.trim()) {
       if (!/^https?:\/\/\S+/i.test(f.cta_url)) {
         return 'CTA URL must be a valid absolute path starting with http:// or https://';
@@ -118,7 +122,7 @@ export default function AdminPage() {
     e?.preventDefault();
     setFormError(null);
     if (!selectedBusiness) return setFormError('Select a business first');
-    
+
     const validationError = validateSectionForm(sectionForm);
     if (validationError) return setFormError(validationError);
 
@@ -138,7 +142,7 @@ export default function AdminPage() {
     try {
       const payload = { ...sectionForm, business_id: selectedBusiness.id };
       const saved = await upsertSection(payload);
-      
+
       setSections((currentSections) => currentSections.map((x) => (x.id === tempId ? saved : x)));
       setSectionForm({ title: '', page_slug: selectedPage, section_key: '', subtitle: '', content: '', position: 0, cta_text: '', cta_url: '', metadata: {} });
       pushToast('Section saved securely', 'success');
@@ -206,76 +210,95 @@ export default function AdminPage() {
 
   if (!session) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-surface-alt text-white">
+      <div className="min-h-screen flex items-center justify-center bg-surface-alt text-ink px-6">
         <div className="max-w-md p-8 text-center">
-          <p className="mb-4">You must <a href="/login" className="underline text-brand">sign in</a> to access the admin dashboard.</p>
+          <p className="mb-4">You must <Link href="/login" className="underline text-brand hover:text-brand-dark">sign in</Link> to access the admin dashboard.</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface-alt text-white p-8">
+    <div className="min-h-screen bg-surface-alt text-ink p-6 md:p-10">
       <div className="max-w-4xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-2xl font-semibold">Admin dashboard</h1>
-          <p className="text-sm text-white/70">Signed in as {session.user?.email}</p>
+        {roleLoading ? (
+          <div className="py-16 text-center text-sm text-ink-muted">Checking access...</div>
+        ) : !isStaff ? (
+          <div className="py-16 text-center">
+            <div className="mx-auto max-w-md rounded-3xl border border-gray-200 bg-white p-10 shadow-sm">
+              <h1 className="text-xl font-semibold text-ink">Staff access only</h1>
+              <p className="mt-3 text-sm text-ink-muted">
+                This area is for Evrybady internal staff. Clients can manage their bookings from the client dashboard.
+              </p>
+              <Link
+                href="/client"
+                className="mt-7 inline-flex rounded-full bg-brand px-7 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark"
+              >
+                Go to my dashboard
+              </Link>
+            </div>
+          </div>
+        ) : (
+        <>
+        <header className="mb-8">
+          <h1 className="text-2xl font-semibold text-ink">Admin dashboard</h1>
+          <p className="text-sm text-ink-muted">Signed in as {session.user?.email} · {isStaff ? 'Internal staff' : 'Client'}</p>
         </header>
 
-        <form onSubmit={createBusiness} className="mb-8 flex gap-3">
+        <form onSubmit={createBusiness} className="mb-10 flex gap-3">
           <label htmlFor="new-business-name" className="sr-only">New business name</label>
           <input
             id="new-business-name"
-            value={newName} 
-            onChange={(e) => setNewName(e.target.value)} 
-            placeholder="New business name" 
-            className="flex-1 rounded-md border border-white/10 bg-transparent px-4 py-2 focus:outline-none focus:border-white/30" 
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+            placeholder="New business name"
+            className="flex-1 rounded-xl border border-gray-300 bg-white px-4 py-2.5 text-ink outline-none focus:border-brand"
           />
-          <button disabled={loading} className="rounded-md bg-brand px-4 py-2 text-surface font-medium disabled:opacity-50">
+          <button disabled={loading} className="rounded-full bg-brand px-6 py-2.5 text-white font-medium transition hover:bg-brand-dark disabled:opacity-50">
             Create
           </button>
         </form>
 
-        {message && <div className="mb-4 text-sm p-3 bg-white/5 rounded border border-white/10">{message}</div>}
+        {message && <div role="status" className="mb-6 text-sm p-4 bg-white rounded-xl border border-gray-200 text-ink-muted">{message}</div>}
 
-        <section className="mb-8">
-          <h2 className="mb-3 text-lg font-semibold">Your businesses</h2>
+        <section className="mb-10">
+          <h2 className="mb-4 text-lg font-semibold text-ink">Your businesses</h2>
           {loading && businesses.length === 0 ? (
-            <div className="text-sm text-white/50">Loading engine instances…</div>
+            <div className="text-sm text-ink-faint">Loading engine instances…</div>
           ) : (
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {businesses.map((b) => (
-                <li key={b.id} className="rounded-md border border-white/10 bg-white/2 p-3 text-sm flex justify-between items-center">
-                  <span><strong>{b.name}</strong> <span className="text-xs text-white/40 ml-2">({b.id})</span></span>
+                <li key={b.id} className="rounded-xl border border-gray-200 bg-white p-4 text-sm flex justify-between items-center">
+                  <span><strong className="text-ink">{b.name}</strong> <span className="text-xs text-ink-faint ml-2">({b.id})</span></span>
                 </li>
               ))}
-              {businesses.length === 0 && <li className="text-sm text-white/50 italic">No businesses bound to this profile.</li>}
+              {businesses.length === 0 && <li className="text-sm text-ink-faint italic">No businesses bound to this profile.</li>}
             </ul>
           )}
         </section>
 
-        <section className="mt-8">
-          <h2 className="mb-3 text-lg font-semibold">Manage sections</h2>
+        <section className="mt-10">
+          <h2 className="mb-4 text-lg font-semibold text-ink">Manage sections</h2>
           <div className="space-y-4">
             <label className="block">
               <span className="sr-only">Select business target context</span>
-              <select 
-                aria-label="Select business" 
-                className="w-full border rounded px-3 py-2 bg-transparent text-white border-white/20 focus:outline-none focus:ring-2" 
+              <select
+                aria-label="Select business"
+                className="w-full border rounded-xl px-3 py-2.5 bg-white text-ink border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand"
                 onChange={(e) => {
                   const id = e.target.value;
                   const biz = businesses.find(b => b.id === id) ?? null;
                   handleSelectBusiness(biz);
-                }} 
+                }}
                 value={selectedBusiness?.id ?? ''}
               >
-                <option value="" className="text-black">— Choose business —</option>
-                {businesses.map(b => <option key={b.id} value={b.id} className="text-black">{b.name}</option>)}
+                <option value="">— Choose business —</option>
+                {businesses.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
               </select>
             </label>
 
             {selectedBusiness && (
-              <SectionForm 
+              <SectionForm
                 selectedBusiness={selectedBusiness}
                 selectedPage={selectedPage}
                 setSelectedPage={setSelectedPage}
@@ -292,7 +315,11 @@ export default function AdminPage() {
           </div>
         </section>
 
+        <BookingsManager token={session.access_token} />
+
         <MarkdownToasts toasts={toasts} />
+        </>
+        )}
       </div>
     </div>
   );

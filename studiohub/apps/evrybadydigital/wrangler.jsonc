@@ -11,6 +11,9 @@
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"
 	},
+	"vars": {
+		"STRIPE_PAYMENT_LINK_URL": "https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000"
+	},
 	"services": [
 		{
 			// Self-reference service binding, the service name must match the worker name

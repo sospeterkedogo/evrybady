@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 
@@ -8,44 +9,44 @@ function ConfirmationContent() {
   const sessionId = searchParams.get('session_id');
 
   return (
-    <main className="min-h-screen bg-surface-alt text-white">
+    <main className="min-h-screen bg-white text-ink">
       <div className="mx-auto max-w-6xl px-6 sm:px-8 lg:px-12">
         <section className="flex min-h-[70vh] items-center py-24 lg:py-32">
           <div className="w-full">
-            <div className="mx-auto max-w-xl rounded-2xl border border-brand/30 bg-brand/[0.06] p-10 text-center shadow-xl shadow-black/25">
-              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-full bg-brand/15">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand">
+            <div className="mx-auto max-w-xl rounded-3xl border border-brand/30 bg-brand-soft p-10 text-center shadow-md shadow-black/5 md:p-12">
+              <div className="mx-auto mb-7 flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-sm">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-brand-dark" aria-hidden="true">
                   <polyline points="20 6 9 17 4 12" />
                 </svg>
               </div>
 
-              <h1 className="text-3xl font-semibold text-white">Booking confirmed</h1>
+              <h1 className="text-3xl font-semibold text-ink">Booking confirmed</h1>
 
               {sessionId ? (
-                <p className="mt-4 text-white/70 leading-7">
+                <p className="mt-5 text-ink-muted leading-7">
                   Your payment was successful and your consultation has been booked.
                   Check your email for a confirmation with next steps.
                 </p>
               ) : (
-                <p className="mt-4 text-white/70 leading-7">
+                <p className="mt-5 text-ink-muted leading-7">
                   Your booking has been received. Check your email for confirmation details.
                 </p>
               )}
 
-              <div className="mt-8 space-y-3">
-                <a
+              <div className="mt-9 space-y-4">
+                <Link
                   href="/"
-                  className="inline-flex rounded-full bg-brand px-8 py-3 text-sm font-semibold text-surface transition hover:bg-white"
+                  className="inline-flex rounded-full bg-brand px-8 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark"
                 >
                   Back to home
-                </a>
+                </Link>
                 <div>
-                  <a
+                  <Link
                     href="/booking"
-                    className="text-sm text-white/50 hover:text-white transition"
+                    className="text-sm text-brand hover:text-brand-dark transition"
                   >
                     Book another consultation
-                  </a>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -60,10 +61,10 @@ export default function BookingConfirmationPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-surface-alt text-white">
+        <main className="min-h-screen bg-white text-ink">
           <div className="mx-auto max-w-6xl px-6 sm:px-8 lg:px-12">
             <section className="flex min-h-[70vh] items-center py-24 lg:py-32">
-              <div className="w-full text-center text-white/70">Loading...</div>
+              <div className="w-full text-center text-ink-muted">Loading...</div>
             </section>
           </div>
         </main>

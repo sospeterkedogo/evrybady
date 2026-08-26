@@ -20,14 +20,14 @@ export default function MarkdownEditor({
       <div className="flex items-center justify-between mb-2">
         <label htmlFor="md-editor" className="text-sm font-medium">Content (Markdown)</label>
       </div>
-      <textarea id="md-editor" value={value} onChange={(e) => onChange(e.target.value)} className="w-full border rounded p-2 bg-transparent" style={{ minHeight: 120 }} />
+      <textarea id="md-editor" value={value} onChange={(e) => onChange(e.target.value)} className="w-full border rounded-lg p-2.5 bg-white border-gray-300 text-ink focus:outline-none focus:ring-2 focus:ring-brand" style={{ minHeight: 120 }} />
 
       <div className="mt-2 flex items-center justify-between">
         <ImageUploader businessId={businessId} onUpload={(url) => onChange(`${value}\n\n![](${url})`)} />
-        <div className="text-sm text-white/60">Preview below</div>
+        <div className="text-sm text-ink-faint">Preview below</div>
       </div>
 
-      <div className="mt-3 p-3 border rounded bg-white/5 prose max-w-none">
+      <div className="mt-3 p-3 border border-gray-200 rounded-lg bg-surface-alt prose max-w-none">
         {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
         <ReactMarkdown remarkPlugins={[remarkGfm as any]} rehypePlugins={[rehypeSanitize as any]}>{value || ''}</ReactMarkdown>
       </div>

@@ -329,16 +329,16 @@ export default function SocialHooksPage() {
   const selectedAngle = form.angle as HookAngle | null;
 
   return (
-    <main className="min-h-screen bg-surface text-white">
+    <main className="min-h-screen bg-white text-ink">
       {/* Hero */}
       <section className="relative overflow-hidden bg-surface-alt py-24 lg:py-32">
-        <div className="pointer-events-none absolute inset-0 blur-3xl opacity-80" style={{ background: 'radial-gradient(circle at top right, rgba(255,215,0,0.15), transparent 24%)' }} />
+        <div className="pointer-events-none absolute inset-0 blur-3xl opacity-60" style={{ background: 'radial-gradient(circle at top right, rgba(161,98,7,0.1), transparent 30%)' }} />
         <div className="relative mx-auto max-w-4xl px-6 text-center sm:px-8">
           <p className="text-sm uppercase tracking-[0.4em] text-brand">Content tools</p>
-          <h1 className="mt-5 text-4xl font-semibold tracking-tight sm:text-5xl">
+          <h1 className="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
             Social media hook generator
           </h1>
-          <p className="mt-5 text-lg text-white/70 leading-8 max-w-2xl mx-auto">
+          <p className="mt-6 text-lg text-ink-muted leading-8 max-w-2xl mx-auto">
             {intro || 'Craft scroll-stopping hooks for any social platform. Select your platform, pick a tone, and get ready-to-use hooks that grab attention.'}
           </p>
         </div>
@@ -347,14 +347,14 @@ export default function SocialHooksPage() {
       {/* Form + Results */}
       <section className="pb-24 lg:pb-32">
         <div className="mx-auto max-w-5xl px-6 sm:px-8 lg:px-12">
-          <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+          <div className="grid gap-12 lg:grid-cols-[1.1fr_0.9fr]">
             {/* Form */}
             <div>
-              <form onSubmit={handleGenerate} className="space-y-6">
+              <form onSubmit={handleGenerate} className="space-y-8">
                 {/* Platform */}
                 <fieldset>
-                  <legend className="text-sm font-medium mb-2">Platform *</legend>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Platform">
+                  <legend className="text-sm font-semibold mb-4 text-ink">Platform *</legend>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Platform">
                     {platforms.map((p) => (
                       <button
                         key={p}
@@ -362,10 +362,10 @@ export default function SocialHooksPage() {
                         role="radio"
                         aria-checked={form.platform === p}
                         onClick={() => updateForm('platform', form.platform === p ? '' : p)}
-                        className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                        className={`rounded-xl border px-4 py-3.5 text-left text-sm transition ${
                           form.platform === p
-                            ? 'border-brand bg-brand/10 text-brand'
-                            : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
+                            ? 'border-brand bg-brand-soft text-brand-dark'
+                            : 'border-gray-200 bg-white text-ink-muted hover:border-brand/40 hover:bg-gray-50'
                         }`}
                       >
                         <span className="font-medium">{platformInfo[p].label}</span>
@@ -376,7 +376,7 @@ export default function SocialHooksPage() {
                     <button
                       type="button"
                       onClick={() => setShowAllPlatforms(true)}
-                      className="mt-2 text-xs text-white/50 hover:text-white/80 transition"
+                      className="mt-3 text-xs text-ink-faint hover:text-brand transition"
                     >
                       Show all platforms
                     </button>
@@ -385,43 +385,43 @@ export default function SocialHooksPage() {
 
                 {/* Platform guidance */}
                 {selectedPlatform && (
-                  <div className="rounded-xl border border-brand/20 bg-brand/5 p-4 text-sm text-brand-dark space-y-1">
-                    <p><span className="font-medium text-brand">{platformInfo[selectedPlatform].label}</span> — {platformInfo[selectedPlatform].description}</p>
-                    <p className="text-xs text-white/50">Character limit: ~{platformInfo[selectedPlatform].charLimit.toLocaleString()} · Optimal: {platformInfo[selectedPlatform].optimal}</p>
+                  <div className="rounded-xl border border-brand/20 bg-brand-soft p-5 text-sm text-brand-dark space-y-1.5">
+                    <p><span className="font-medium">{platformInfo[selectedPlatform].label}</span> — {platformInfo[selectedPlatform].description}</p>
+                    <p className="text-xs text-ink-faint">Character limit: ~{platformInfo[selectedPlatform].charLimit.toLocaleString()} · Optimal: {platformInfo[selectedPlatform].optimal}</p>
                     {platformTips[selectedPlatform]?.tip && (
-                      <p className="text-xs text-brand/70 mt-2">Tip: {platformTips[selectedPlatform]?.tip}</p>
+                      <p className="text-xs mt-2">Tip: {platformTips[selectedPlatform]?.tip}</p>
                     )}
                   </div>
                 )}
 
                 {/* Topic */}
                 <div>
-                  <label htmlFor="topic" className="block text-sm font-medium mb-2">Topic *</label>
+                  <label htmlFor="topic" className="block text-sm font-semibold mb-3 text-ink">Topic *</label>
                   <input
                     id="topic"
                     value={form.topic}
                     onChange={(e) => updateForm('topic', e.target.value)}
                     placeholder={selectedPlatform ? platformInfo[selectedPlatform].placeholder : 'e.g. social media marketing'}
-                    className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none focus:border-white/30"
+                    className="w-full rounded-xl border border-gray-300 bg-white px-5 py-4 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
                   />
                 </div>
 
                 {/* Audience */}
                 <div>
-                  <label htmlFor="audience" className="block text-sm font-medium mb-2">Target audience <span className="text-white/40">(optional)</span></label>
+                  <label htmlFor="audience" className="block text-sm font-semibold mb-3 text-ink">Target audience <span className="font-normal text-ink-faint">(optional)</span></label>
                   <input
                     id="audience"
                     value={form.audience}
                     onChange={(e) => updateForm('audience', e.target.value)}
                     placeholder="e.g. small business owners, freelancers"
-                    className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none focus:border-white/30"
+                    className="w-full rounded-xl border border-gray-300 bg-white px-5 py-4 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
                   />
                 </div>
 
                 {/* Hook angle */}
                 <fieldset>
-                  <legend className="text-sm font-medium mb-2">Hook angle *</legend>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2" role="radiogroup" aria-label="Hook angle">
+                  <legend className="text-sm font-semibold mb-4 text-ink">Hook angle *</legend>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3" role="radiogroup" aria-label="Hook angle">
                     {angles.map((a) => (
                       <button
                         key={a}
@@ -429,14 +429,14 @@ export default function SocialHooksPage() {
                         role="radio"
                         aria-checked={form.angle === a}
                         onClick={() => updateForm('angle', form.angle === a ? '' : a)}
-                        className={`rounded-xl border px-4 py-3 text-left text-sm transition ${
+                        className={`rounded-xl border px-4 py-3.5 text-left text-sm transition ${
                           form.angle === a
-                            ? 'border-brand bg-brand/10 text-brand'
-                            : 'border-white/10 bg-white/5 text-white/70 hover:bg-white/10'
+                            ? 'border-brand bg-brand-soft text-brand-dark'
+                            : 'border-gray-200 bg-white text-ink-muted hover:border-brand/40 hover:bg-gray-50'
                         }`}
                       >
                         <span className="font-medium">{angleInfo[a].label}</span>
-                        <p className="text-xs text-white/40 mt-0.5">{angleInfo[a].description}</p>
+                        <p className="text-xs mt-0.5 text-ink-faint">{angleInfo[a].description}</p>
                       </button>
                     ))}
                   </div>
@@ -444,20 +444,20 @@ export default function SocialHooksPage() {
 
                 {/* Keywords */}
                 <div>
-                  <label htmlFor="keywords" className="block text-sm font-medium mb-2">Keywords <span className="text-white/40">(optional)</span></label>
+                  <label htmlFor="keywords" className="block text-sm font-semibold mb-3 text-ink">Keywords <span className="font-normal text-ink-faint">(optional)</span></label>
                   <input
                     id="keywords"
                     value={form.keywords}
                     onChange={(e) => updateForm('keywords', e.target.value)}
                     placeholder="e.g. growth, strategy, tips"
-                    className="w-full rounded-xl border border-white/10 bg-surface-alt px-5 py-4 text-white outline-none focus:border-white/30"
+                    className="w-full rounded-xl border border-gray-300 bg-white px-5 py-4 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
                   />
                 </div>
 
                 <button
                   type="submit"
                   disabled={!selectedPlatform || !form.topic.trim() || !selectedAngle}
-                  className="inline-flex rounded-full bg-brand px-10 py-4 text-sm font-semibold text-surface transition hover:bg-white disabled:opacity-30 disabled:cursor-not-allowed"
+                  className="inline-flex rounded-full bg-brand px-10 py-4 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   {selectedPlatform && form.topic.trim() && selectedAngle
                     ? `Generate ${selectedPlatform === 'twitter' ? 'tweets' : 'hooks'}`
@@ -468,16 +468,16 @@ export default function SocialHooksPage() {
 
             {/* Results */}
             <div>
-              <h2 className="text-lg font-semibold mb-4">
+              <h2 className="text-lg font-semibold mb-5 text-ink">
                 {results.length > 0
                   ? `Your ${selectedPlatform === 'twitter' ? 'tweets' : 'hooks'}`
                   : 'Preview'}
               </h2>
 
               {results.length === 0 && (
-                <div className="rounded-2xl border border-white/10 bg-surface-alt p-8 text-center">
-                  <div className="text-4xl mb-4">✍️</div>
-                  <p className="text-sm text-white/50">
+                <div className="rounded-2xl border border-gray-200 bg-surface-alt p-9 text-center">
+                  <div className="text-4xl mb-4" aria-hidden="true">✍️</div>
+                  <p className="text-sm text-ink-muted">
                     Fill in the form and generate hooks. They&rsquo;ll appear here ready to copy and post.
                   </p>
                 </div>
@@ -485,7 +485,7 @@ export default function SocialHooksPage() {
 
               {results.length > 0 && (
                 <div className="space-y-4">
-                  <p className="text-xs text-white/40">
+                  <p className="text-xs text-ink-faint">
                     Tap a card to copy. Optimised for {platformInfo[form.platform as SocialPlatform].label}.
                   </p>
                   {results.map((r, i) => (
@@ -494,19 +494,19 @@ export default function SocialHooksPage() {
                       type="button"
                       onClick={() => copyHook(r.hook, i)}
                       aria-label={`Copy: ${r.hook}`}
-                      className={`w-full text-left rounded-2xl border p-5 transition ${
+                      className={`w-full text-left rounded-2xl border p-6 transition ${
                         copiedId === i
-                          ? 'border-brand bg-brand/10'
-                          : 'border-white/10 bg-surface hover:bg-white/5'
+                          ? 'border-brand bg-brand-soft'
+                          : 'border-gray-200 bg-white hover:border-brand/40 hover:shadow-md'
                       }`}
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <p className="text-sm leading-7 text-white/90 flex-1">{r.hook}</p>
-                        <span className="shrink-0 text-xs text-white/50 mt-1" aria-live="polite">
+                        <p className="text-sm leading-7 text-ink flex-1">{r.hook}</p>
+                        <span className="shrink-0 text-xs font-medium text-brand mt-1" aria-live="polite">
                           {copiedId === i ? 'Copied!' : 'Copy'}
                         </span>
                       </div>
-                      <p className="mt-2 text-xs text-white/40 leading-5">{r.why}</p>
+                      <p className="mt-2.5 text-xs text-ink-faint leading-5">{r.why}</p>
                     </button>
                   ))}
                 </div>
@@ -514,9 +514,9 @@ export default function SocialHooksPage() {
 
               {/* CMS platform examples */}
               {selectedPlatform && platformTips[selectedPlatform]?.examples && results.length === 0 && (
-                <div className="mt-6 rounded-2xl border border-white/10 bg-surface-alt p-5">
-                  <p className="text-xs uppercase tracking-wider text-brand mb-2">Example hooks</p>
-                  <div className="text-sm text-white/60 whitespace-pre-line leading-7">
+                <div className="mt-6 rounded-2xl border border-gray-200 bg-surface-alt p-6">
+                  <p className="text-xs uppercase tracking-wider text-brand mb-3">Example hooks</p>
+                  <div className="text-sm text-ink-muted whitespace-pre-line leading-7">
                     {platformTips[selectedPlatform]!.examples}
                   </div>
                 </div>

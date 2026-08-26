@@ -47,12 +47,12 @@ export default function ImageUploader({ businessId, onUpload }: { businessId: st
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        className="inline-flex items-center gap-2 px-3 py-2 bg-white/5 rounded text-sm hover:bg-white/10 transition"
+        className="inline-flex items-center gap-2 px-3.5 py-2 bg-gray-100 border border-gray-200 rounded-lg text-sm text-ink hover:bg-gray-200 transition"
       >
         Upload image
       </button>
-      {uploading && <span className="text-sm text-white/60" aria-live="polite">Uploading…</span>}
-      {error && <span className="text-sm text-red-400" role="alert">{error}</span>}
+      {uploading && <span className="text-sm text-ink-faint" aria-live="polite">Uploading…</span>}
+      {error && <span className="text-sm text-red-700" role="alert">{error}</span>}
     </div>
   );
 }

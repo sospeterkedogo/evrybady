@@ -1,6 +1,9 @@
 'use client';
 
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useAuth } from '@/hooks/useAuth';
 
 const links = [
   { label: 'About', href: '/about' },
@@ -13,10 +16,18 @@ const links = [
 ];
 
 export default function Navbar() {
+  const { session, signOut } = useAuth();
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const drawerRef = useRef<HTMLDivElement>(null);
   const hamburgerRef = useRef<HTMLButtonElement>(null);
+
+  const handleSignOut = useCallback(async () => {
+    await signOut();
+    setOpen(false);
+    router.push('/');
+  }, [signOut, router]);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -93,22 +104,58 @@ export default function Navbar() {
       <nav
         aria-label="Main navigation"
         className={`fixed inset-x-0 top-0 z-50 border-b transition-colors duration-200 ${
-          scrolled ? 'border-white/10 bg-surface/95 backdrop-blur-lg' : 'border-transparent bg-surface/80 backdrop-blur-md'
+          scrolled ? 'border-gray-200 bg-white/95 shadow-sm backdrop-blur-lg' : 'border-transparent bg-white/85 backdrop-blur-md'
         }`}
       >
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-6">
-          <a href="/" className="flex items-center gap-2.5">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-6 lg:px-10">
+          <Link href="/" className="flex items-center gap-2.5">
             <img src="/LOGO.png" alt="EvryBady logo" className="h-9 w-auto rounded-md object-contain" />
             <span className="font-semibold tracking-[0.18em] text-brand">EVRYBADY</span>
-          </a>
+          </Link>
 
           {/* Desktop links */}
-          <div className="hidden items-center gap-6 text-sm text-white/80 md:flex" role="list">
+          <div className="hidden items-center gap-8 text-sm text-ink-muted md:flex" role="list">
             {links.map((l) => (
-              <a key={l.href} href={l.href} className="transition hover:text-white" role="listitem">
+              <Link key={l.href} href={l.href} className="transition hover:text-brand" role="listitem">
                 {l.label}
-              </a>
+              </Link>
             ))}
+          </div>
+
+          {/* Desktop auth */}
+          <div className="hidden items-center gap-3 md:flex">
+            {session ? (
+              <>
+                <Link
+                  href="/client"
+                  className="inline-flex rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
+                >
+                  My dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="text-sm text-ink-muted transition hover:text-ink"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="inline-flex rounded-full border border-brand/40 px-5 py-2.5 text-sm font-semibold text-brand-dark transition hover:bg-brand/10"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/signup"
+                  className="inline-flex rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-brand-dark"
+                >
+                  Sign up
+                </Link>
+              </>
+            )}
           </div>
 
           {/* Hamburger button — mobile only */}
@@ -116,7 +163,7 @@ export default function Navbar() {
             ref={hamburgerRef}
             type="button"
             onClick={toggle}
-            className="relative z-[60] flex h-9 w-9 items-center justify-center rounded-lg text-white/80 transition hover:bg-white/10 md:hidden"
+            className="relative z-[60] flex h-10 w-10 items-center justify-center rounded-lg text-ink-muted transition hover:bg-gray-100 md:hidden"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             aria-controls="mobile-menu-drawer"
@@ -141,7 +188,7 @@ export default function Navbar() {
 
       {/* Mobile drawer overlay */}
       <div
-        className={`fixed inset-0 z-[55] bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+        className={`fixed inset-0 z-[55] bg-black/40 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
           open ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={close}
@@ -155,33 +202,68 @@ export default function Navbar() {
         role="dialog"
         aria-modal="true"
         aria-label="Navigation menu"
-        className={`fixed right-0 top-0 z-[56] flex h-full w-64 flex-col bg-surface border-l border-white/10 shadow-2xl transition-transform duration-300 ease-out md:hidden ${
+        className={`fixed right-0 top-0 z-[56] flex h-full w-72 flex-col bg-white border-l border-gray-200 shadow-2xl transition-transform duration-300 ease-out md:hidden ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <div className="pt-16 px-6 pb-8 flex-1 overflow-y-auto">
-          <div className="flex flex-col gap-1" role="list">
+        <div className="pt-20 px-6 pb-8 flex-1 overflow-y-auto">
+          <div className="flex flex-col gap-1.5" role="list">
             {links.map((l) => (
-              <a
+              <Link
                 key={l.href}
                 href={l.href}
                 onClick={close}
-                className="rounded-lg px-4 py-3 text-base font-medium text-white/85 transition hover:bg-white/8 hover:text-white"
+                className="rounded-lg px-4 py-3 text-base font-medium text-ink-muted transition hover:bg-gray-100 hover:text-ink"
                 role="listitem"
               >
                 {l.label}
-              </a>
+              </Link>
             ))}
           </div>
 
-          <div className="mt-8 border-t border-white/10 pt-6">
-            <a
+          <div className="mt-10 space-y-3 border-t border-gray-200 pt-8">
+            {session ? (
+              <>
+                <Link
+                  href="/client"
+                  onClick={close}
+                  className="block rounded-full bg-brand px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-brand-dark"
+                >
+                  My dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={handleSignOut}
+                  className="block w-full rounded-full border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-ink-muted transition hover:border-rose-300 hover:text-rose-700"
+                >
+                  Sign out
+                </button>
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-3">
+                <Link
+                  href="/login"
+                  onClick={close}
+                  className="block rounded-full border border-brand/40 px-4 py-3 text-center text-sm font-semibold text-brand-dark transition hover:bg-brand/10"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="/signup"
+                  onClick={close}
+                  className="block rounded-full bg-brand px-4 py-3 text-center text-sm font-semibold text-white transition hover:bg-brand-dark"
+                >
+                  Sign up
+                </Link>
+              </div>
+            )}
+            <Link
               href="/contact"
               onClick={close}
-              className="block rounded-lg bg-brand px-4 py-3 text-center text-sm font-semibold text-surface transition hover:bg-white"
+              className="block rounded-full border border-gray-300 px-4 py-3 text-center text-sm font-semibold text-ink-muted transition hover:text-ink"
             >
               Get in touch
-            </a>
+            </Link>
           </div>
         </div>
       </div>

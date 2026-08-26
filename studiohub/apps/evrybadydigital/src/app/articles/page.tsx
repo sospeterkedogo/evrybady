@@ -56,59 +56,65 @@ export default function ArticlesPage() {
   const sortedArticles = [...articles].sort((a, b) => b.date.localeCompare(a.date));
 
   return (
-    <main className="min-h-screen bg-surface text-white">
+    <main className="min-h-screen bg-white text-ink">
       <div className="mx-auto max-w-3xl px-6 sm:px-8">
 
         {/* Hero */}
         <section className="flex min-h-[50vh] items-center py-24 lg:py-32">
           <div>
             <p className="text-sm uppercase tracking-[0.4em] text-brand">News & insights</p>
-            <h1 className="mt-4 text-4xl font-bold text-white sm:text-5xl">Articles</h1>
+            <h1 className="mt-5 text-4xl font-bold text-ink sm:text-5xl">Articles</h1>
           </div>
         </section>
 
         <section className="pb-8">
-          <div className="rounded-2xl border border-white/10 bg-surface-alt p-6">
-            <h2 className="text-xl font-semibold text-white">Publish an article</h2>
-            <p className="mt-2 text-sm text-white/60">Share a new update with your audience.</p>
-            <form onSubmit={handleCreateArticle} className="mt-6 space-y-4">
-              <input value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Article title" className="w-full rounded-xl border border-white/10 bg-surface px-4 py-3 text-white outline-none placeholder:text-white/40" />
-              <textarea value={content} onChange={(event) => setContent(event.target.value)} rows={5} placeholder="Write your article here..." className="w-full rounded-xl border border-white/10 bg-surface px-4 py-3 text-white outline-none placeholder:text-white/40" />
-              <button type="submit" disabled={status === 'saving'} className="rounded-full bg-brand px-6 py-3 text-sm font-semibold text-surface disabled:opacity-70">{status === 'saving' ? 'Publishing...' : 'Publish article'}</button>
+          <div className="rounded-3xl border border-gray-200 bg-surface-alt p-8">
+            <h2 className="text-xl font-semibold text-ink">Publish an article</h2>
+            <p className="mt-2 text-sm text-ink-muted">Share a new update with your audience.</p>
+            <form onSubmit={handleCreateArticle} className="mt-7 space-y-5">
+              <div>
+                <label htmlFor="article-title" className="sr-only">Article title</label>
+                <input id="article-title" value={title} onChange={(event) => setTitle(event.target.value)} placeholder="Article title" className="w-full rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-ink outline-none placeholder:text-ink-faint focus:border-brand" />
+              </div>
+              <div>
+                <label htmlFor="article-content" className="sr-only">Article content</label>
+                <textarea id="article-content" value={content} onChange={(event) => setContent(event.target.value)} rows={5} placeholder="Write your article here..." className="w-full rounded-xl border border-gray-300 bg-white px-5 py-3.5 text-ink outline-none placeholder:text-ink-faint focus:border-brand" />
+              </div>
+              <button type="submit" disabled={status === 'saving'} className="rounded-full bg-brand px-7 py-3 text-sm font-semibold text-white transition hover:bg-brand-dark disabled:opacity-60">{status === 'saving' ? 'Publishing...' : 'Publish article'}</button>
             </form>
-            {message ? <p className={`mt-3 text-sm ${status === 'success' ? 'text-brand' : 'text-rose-300'}`}>{message}</p> : null}
+            {message ? <p role="status" className={`mt-4 text-sm font-medium ${status === 'success' ? 'text-emerald-700' : 'text-rose-700'}`}>{message}</p> : null}
           </div>
         </section>
 
         {/* Articles list */}
         <section className="pb-24 lg:pb-32 space-y-8">
           {sortedArticles.map((article) => (
-            <article key={article.id} className="p-8 rounded-2xl bg-surface-alt border border-white/10 shadow-xl shadow-black/19">
-              <h2 className="text-2xl font-semibold text-brand">{article.title}</h2>
-              <div className="text-sm text-white/50 mt-2">{article.date}</div>
-              <p className="mt-4 text-white/80 leading-7">{article.content}</p>
-              <div className="flex items-center gap-4 mt-5">
-                <span className="flex items-center gap-1 cursor-pointer select-none">
-                  👍 <span>{article.reactions.like}</span>
+            <article key={article.id} className="p-8 rounded-3xl bg-surface-alt border border-gray-200 shadow-sm">
+              <h2 className="text-2xl font-semibold text-ink">{article.title}</h2>
+              <div className="text-sm text-ink-faint mt-2.5">{article.date}</div>
+              <p className="mt-4 text-ink-muted leading-7">{article.content}</p>
+              <div className="flex items-center gap-5 mt-6">
+                <span className="flex items-center gap-1.5 text-ink-muted" aria-label={`${article.reactions.like} likes`}>
+                  <span aria-hidden="true">👍</span> <span>{article.reactions.like}</span>
                 </span>
-                <span className="flex items-center gap-1 cursor-pointer select-none">
-                  ❤️ <span>{article.reactions.love}</span>
+                <span className="flex items-center gap-1.5 text-ink-muted" aria-label={`${article.reactions.love} loves`}>
+                  <span aria-hidden="true">❤️</span> <span>{article.reactions.love}</span>
                 </span>
               </div>
-              <div className="mt-6">
-                <h3 className="font-semibold text-white">Comments</h3>
+              <div className="mt-7">
+                <h3 className="font-semibold text-ink">Comments</h3>
                 <ul className="mt-3 space-y-2">
-                  {article.comments.length === 0 && <li className="text-white/40">No comments yet.</li>}
+                  {article.comments.length === 0 && <li className="text-ink-faint">No comments yet.</li>}
                   {article.comments.map((c, i) => (
-                    <li key={i} className="text-white/70"><b className="text-white/90">{c.user}:</b> {c.text}</li>
+                    <li key={i} className="text-ink-muted"><b className="text-ink">{c.user}:</b> {c.text}</li>
                   ))}
                 </ul>
-                <form className="flex gap-3 mt-4">
+                <form className="flex gap-3 mt-5">
                   <label htmlFor="comment-input" className="sr-only">Add a comment</label>
-                  <input id="comment-input" type="text" placeholder="Add a comment..." className="flex-1 border border-white/10 bg-surface rounded-xl px-4 py-3 text-white" disabled />
-                  <button type="submit" className="bg-brand text-surface px-6 py-3 rounded-xl text-sm font-semibold" disabled>Post</button>
+                  <input id="comment-input" type="text" placeholder="Add a comment..." className="flex-1 border border-gray-300 bg-white rounded-xl px-4 py-3 text-ink placeholder:text-ink-faint" disabled />
+                  <button type="submit" className="bg-brand text-white px-6 py-3 rounded-xl text-sm font-semibold" disabled>Post</button>
                 </form>
-                <div className="text-xs text-white/40 mt-2">(Demo: Comments/reactions not interactive)</div>
+                <div className="text-xs text-ink-faint mt-2.5">(Demo: Comments/reactions not interactive)</div>
               </div>
             </article>
           ))}

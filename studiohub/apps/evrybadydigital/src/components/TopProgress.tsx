@@ -36,7 +36,7 @@ export default function TopProgress() {
   return (
     <div aria-hidden className={`fixed left-0 top-0 z-50 h-1 w-full transition-opacity ${visible ? 'opacity-100' : 'opacity-0'}`}>
       <div className="h-1 w-full overflow-hidden">
-        <div className="h-1 bg-linear-to-r from-yellow-300 via-white to-yellow-300 animate-[progress_1.2s_ease-in-out]" style={{ width: visible ? '100%' : '0%' }} />
+        <div className="h-1 bg-linear-to-r from-brand-dark via-brand to-brand-dark animate-[progress_1.2s_ease-in-out]" style={{ width: visible ? '100%' : '0%' }} />
       </div>
       <style>{`@keyframes progress { 0% { transform: translateX(-100%);} 100% { transform: translateX(0%);} }`}</style>
     </div>
