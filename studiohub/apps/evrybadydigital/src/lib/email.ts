@@ -1,5 +1,5 @@
 type MailPayload = {
-  to: string;
+  to: string | string[];
   subject: string;
   html: string;
   text?: string;
@@ -27,7 +27,7 @@ export async function sendEmail(payload: MailPayload) {
       },
       body: JSON.stringify({
         from,
-        to: [payload.to],
+        to: Array.isArray(payload.to) ? payload.to : [payload.to],
         subject: payload.subject,
         html: payload.html,
         text: payload.text,

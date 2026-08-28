@@ -7,16 +7,23 @@ export default function TopProgress() {
 
   useEffect(() => {
     let timer: number | null = null;
+    let showFrame: number | null = null;
 
     const show = () => {
-      setVisible(true);
+      // History can be changed by Next during an insertion effect. Defer the
+      // state update until the browser task queue so we never update React
+      // while an insertion effect is running.
+      if (showFrame != null) window.clearTimeout(showFrame);
+      showFrame = window.setTimeout(() => setVisible(true), 0);
       if (timer != null) window.clearTimeout(timer);
       timer = window.setTimeout(() => setVisible(false), 1200);
     };
 
     type HistoryMethod = (data: unknown, title?: string, url?: string | null) => void;
+    const originals: Partial<Record<'pushState' | 'replaceState', HistoryMethod>> = {};
     const patchHistory = (type: 'pushState' | 'replaceState') => {
       const orig = (history as unknown as Record<string, HistoryMethod>)[type];
+      originals[type] = orig;
       (history as unknown as Record<string, HistoryMethod>)[type] = function (data: unknown, title?: string, url?: string | null) {
         orig.call(this, data, title, url);
         show();
@@ -29,7 +36,10 @@ export default function TopProgress() {
 
     return () => {
       window.removeEventListener('popstate', show);
+      if (showFrame != null) window.clearTimeout(showFrame);
       if (timer != null) window.clearTimeout(timer);
+      if (originals.pushState) history.pushState = originals.pushState as typeof history.pushState;
+      if (originals.replaceState) history.replaceState = originals.replaceState as typeof history.replaceState;
     };
   }, []);
 

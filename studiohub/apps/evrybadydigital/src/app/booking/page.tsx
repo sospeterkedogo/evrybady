@@ -13,24 +13,13 @@ function BookingContent() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [company, setCompany] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [freeSubmitted, setFreeSubmitted] = useState(false);
 
   const selectedServices = services.filter((s) => selectedIds.includes(s.id));
-  const hasPaid = selectedServices.some((s) => !s.isFree);
-
-  const feeDisplay = () => {
-    const raw = process.env.NEXT_PUBLIC_BOOKING_FEE_GBP ?? '10000';
-    const gbp = Number(raw) / 100;
-    return `£${gbp}`;
-  };
-
-  const buyLink =
-    process.env.NEXT_PUBLIC_STRIPE_BUY_LINK ||
-    'https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000';
-
   const toggleService = (id: string) => {
     setFreeSubmitted(false);
     setError(null);
@@ -39,13 +28,13 @@ function BookingContent() {
     );
   };
 
-  async function handleCheckout() {
+  async function handleDiscoverySubmit() {
     if (selectedServices.length === 0) {
       setError('Please select at least one service.');
       return;
     }
-    if (!name.trim() || !email.trim()) {
-      setError('Please fill in your name and email.');
+    if (!name.trim() || !email.trim() || !message.trim()) {
+      setError('Please fill in your name, email, and project brief.');
       return;
     }
 
@@ -56,13 +45,12 @@ function BookingContent() {
       name: name.trim(),
       email: email.trim(),
       phone: phone.trim(),
+      company: company.trim(),
       services: selectedServices.map((s) => s.name),
       message: message.trim(),
     };
 
     try {
-      // Create the booking record first so the booking slot is always reserved,
-      // independently of the Stripe onboarding call payment.
       const bookingResponse = await fetch('/api/bookings', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -71,23 +59,6 @@ function BookingContent() {
       const bookingData = await bookingResponse.json().catch(() => null);
       if (!bookingResponse.ok) {
         throw new Error(bookingData?.error || 'Unable to submit your request.');
-      }
-
-      // Paid services: proceed to Stripe for the onboarding call fee.
-      if (hasPaid) {
-        const response = await fetch('/api/checkout', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload),
-        });
-        const data = await response.json();
-
-        if (!response.ok || !data?.url) {
-          throw new Error(data?.error || 'Unable to start checkout.');
-        }
-
-        window.location.assign(data.url);
-        return;
       }
 
       setFreeSubmitted(true);
@@ -106,86 +77,48 @@ function BookingContent() {
         <section className="py-24 lg:py-32">
           <div className="w-full">
             <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white p-10 shadow-md shadow-black/5 sm:p-14">
-              <p className="text-sm uppercase tracking-[0.4em] text-brand">Book a consultation</p>
+              <p className="text-sm uppercase tracking-[0.4em] text-brand">Discovery &amp; proposal</p>
               <h1 className="mt-6 text-4xl font-semibold tracking-tight text-ink sm:text-5xl">
-                Digital Marketing Strategy Consultation
+                Start with a free discovery call
               </h1>
               <p className="mt-6 max-w-3xl text-lg leading-8 text-ink-muted">
-                Book a one-to-one digital marketing consultation tailored to your business goals.
-                During this session, we&apos;ll assess your current online presence, identify growth
-                opportunities, and provide actionable recommendations to improve your brand visibility,
-                generate qualified leads, and increase conversions.
+                Tell us about your vision, requirements, and goals. We&apos;ll review your brief,
+                meet for a free onboarding call, and create a tailored proposal for the work.
               </p>
 
-              <p className="mt-8 max-w-3xl text-sm uppercase tracking-[0.3em] text-ink-faint">
-                Your consultation may include
-              </p>
-              <ul className="mt-5 max-w-3xl space-y-3 text-ink-muted">
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Website and SEO review
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Social media strategy
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Branding and positioning advice
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Content marketing recommendations
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Paid advertising opportunities
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Lead generation strategy
-                </li>
-                <li className="flex items-start gap-3">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-brand" />
-                  Marketing roadmap with next steps
-                </li>
-              </ul>
-
-              <p className="mt-8 max-w-3xl text-lg leading-8 text-ink-muted">
-                Whether you&apos;re launching a new business, looking to grow your existing brand,
-                or need expert guidance on your marketing strategy, you&apos;ll leave with practical
-                insights and a clear action plan.
-              </p>
-
-              <div className="mt-9 flex flex-wrap gap-x-10 gap-y-4 text-sm text-ink-muted">
+              <div className="mt-9 grid gap-4 sm:grid-cols-3 text-sm text-ink-muted">
                 <span className="flex items-center gap-2.5">
                   <svg className="h-5 w-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></svg>
-                  Duration: 60 minutes
+                  1. Share your brief
                 </span>
                 <span className="flex items-center gap-2.5">
                   <svg className="h-5 w-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
-                  Format: Online (Google Meet or Zoom)
+                  2. Free discovery call
                 </span>
                 <span className="flex items-center gap-2.5">
                   <svg className="h-5 w-5 text-ink-faint" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                  Includes: Personalised recommendations and follow-up summary
+                  3. Proposal before work begins
                 </span>
               </div>
+              <p className="mt-8 max-w-3xl text-sm leading-7 text-ink-muted">
+                There&apos;s no charge to submit your brief or join the discovery call. The £100
+                onboarding fee is only requested after you approve the proposal and we&apos;re ready to begin work.
+              </p>
             </div>
           </div>
         </section>
 
         {cancelled && (
           <div role="status" className="mb-10 rounded-xl border border-amber-200 bg-amber-50 p-5 text-amber-700">
-            Checkout was cancelled. You can select a service and try again.
+            Your previous request was not sent. You can select a service and try again.
           </div>
         )}
 
-        {/* Service grid */}
-        <section className="pb-16">
-          <h2 className="text-sm uppercase tracking-[0.4em] text-brand mb-5">Our Services &amp; Typical Investment</h2>
+        {/* Project interests */}
+        <section id="project-interests" className="pb-16">
+          <h2 className="text-sm uppercase tracking-[0.4em] text-brand mb-5">What can we help with?</h2>
           <p className="mb-11 max-w-2xl text-ink-muted">
-            Select the packages you&apos;re interested in. The consultation fee covers your onboarding call and is confirmed when you check out.
+            Choose the areas that best match your project. We&apos;ll use these alongside your brief to prepare for the discovery call.
           </p>
 
           <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
@@ -220,19 +153,17 @@ function BookingContent() {
           </div>
         </section>
 
-        {/* Contact form + checkout */}
+        {/* Discovery brief */}
         {selectedServices.length > 0 && !freeSubmitted && (
           <section className="pb-24 lg:pb-32">
             <div className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
               <div className="rounded-3xl border border-gray-200 bg-white p-9 shadow-sm md:p-12">
-                <h2 className="text-2xl font-semibold text-ink">Your details</h2>
+                <h2 className="text-2xl font-semibold text-ink">Your project brief</h2>
                 <p className="mt-3 text-sm text-ink-muted">
-                  {hasPaid
-                    ? `Fill in your details to proceed to checkout (${feeDisplay()} onboarding call fee).`
-                    : 'Fill in your details to book your free consultation.'}
+                  Give us the context we need for a useful, free discovery call.
                 </p>
 
-                <div className="mt-9 space-y-6">
+                <form className="mt-9 space-y-6" onSubmit={(event) => { event.preventDefault(); void handleDiscoverySubmit(); }}>
                   <div>
                     <label htmlFor="booking-name" className="sr-only">Your name</label>
                     <input
@@ -272,17 +203,30 @@ function BookingContent() {
                     />
                   </div>
                   <div>
-                    <label htmlFor="booking-message" className="sr-only">Project details (optional)</label>
+                    <label htmlFor="booking-company" className="sr-only">Company or organisation (optional)</label>
+                    <input
+                      id="booking-company"
+                      type="text"
+                      placeholder="Company or organisation (optional)"
+                      autoComplete="organization"
+                      value={company}
+                      onChange={(e) => setCompany(e.target.value)}
+                      className="w-full min-h-[52px] rounded-xl border border-gray-300 bg-white px-5 py-4 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="booking-message" className="sr-only">Project brief</label>
                     <textarea
                       id="booking-message"
-                      placeholder="Tell us about your project (optional)"
-                      rows={4}
+                      placeholder="Tell us about your vision, requirements, goals, and ideal timeline"
+                      rows={6}
+                      required
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       className="w-full min-h-[52px] rounded-xl border border-gray-300 bg-white px-5 py-4 text-ink outline-none placeholder:text-ink-faint focus:border-brand"
                     />
                   </div>
-                </div>
+                </form>
               </div>
 
               <div className="space-y-6">
@@ -307,17 +251,12 @@ function BookingContent() {
                     ))}
                   </div>
 
-                  {hasPaid && (
-                    <div className="mt-7 rounded-xl border border-gray-200 bg-white p-5">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-ink-muted">Onboarding call fee</span>
-                        <span className="text-lg font-semibold text-ink">{feeDisplay()}</span>
-                      </div>
-                      <p className="mt-2 text-xs text-ink-faint">
-                        This fee secures your consultation session.
-                      </p>
-                    </div>
-                  )}
+                  <div className="mt-7 rounded-xl border border-brand/20 bg-brand-soft/40 p-5">
+                    <p className="text-sm font-semibold text-ink">What happens next</p>
+                    <p className="mt-2 text-sm leading-6 text-ink-muted">
+                      We&apos;ll review your brief, arrange your free call, then send a proposal. The £100 onboarding fee is due only if you approve the proposal and choose to start.
+                    </p>
+                  </div>
                 </div>
 
                 {error && (
@@ -328,21 +267,15 @@ function BookingContent() {
 
                 <button
                   type="button"
-                  onClick={handleCheckout}
+                  onClick={handleDiscoverySubmit}
                   disabled={loading}
                   className="w-full min-h-[52px] rounded-full bg-brand px-8 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-dark disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {loading
-                    ? 'Redirecting...'
-                    : hasPaid
-                      ? `Proceed to Checkout — ${feeDisplay()}`
-                      : 'Book Free Consultation'}
+                  {loading ? 'Sending your brief...' : 'Request free discovery call'}
                 </button>
 
                 <p className="text-center text-xs text-ink-faint">
-                  {hasPaid
-                    ? 'You\'ll be redirected to Stripe to complete your payment securely.'
-                    : 'No payment required. We\'ll be in touch to confirm your slot.'}
+                  No payment is required now. We&apos;ll be in touch to arrange your call.
                 </p>
               </div>
             </div>
@@ -364,7 +297,7 @@ function BookingContent() {
                 <span className="font-medium text-ink">
                   {selectedServices.map((s) => s.name).join(', ')}
                 </span>
-                . Our team will be in touch shortly to confirm your free consultation slot.
+                . Our team will be in touch shortly to arrange your free discovery call and discuss the next steps.
               </p>
               <Link
                 href="/"
@@ -381,20 +314,19 @@ function BookingContent() {
           <section className="pb-24 lg:pb-32">
             <div className="rounded-3xl border border-gray-200 bg-surface-alt p-10 text-center shadow-md shadow-black/5 md:p-16">
               <p className="text-sm uppercase tracking-[0.4em] text-brand">Not sure what you need?</p>
-              <h2 className="mt-5 text-3xl font-semibold text-ink sm:text-4xl">Book your £100 onboarding consultation</h2>
+              <h2 className="mt-5 text-3xl font-semibold text-ink sm:text-4xl">Start with a free discovery call</h2>
               <p className="mt-5 max-w-2xl mx-auto text-lg text-ink-muted leading-8">
-                We&apos;ll assess your current online presence and recommend the right website,
-                branding, SEO, or marketing package for your goals. Payment is taken securely
-                through Stripe when you book.
+                Select the services you&apos;re interested in, then share your vision, requirements,
+                and goals. We&apos;ll discuss the right next steps together before any work begins.
               </p>
               <a
-                href={buyLink}
+                href="#project-interests"
                 className="mt-9 inline-flex rounded-full bg-brand px-9 py-4 text-sm font-semibold text-white transition hover:bg-brand-dark"
               >
-                Book My £100 Consultation
+                Choose project areas
               </a>
               <p className="mt-4 text-center text-xs text-ink-faint">
-                You&apos;ll be redirected to Stripe to complete your payment securely.
+                The £100 onboarding fee is only due once you approve the proposal and work begins.
               </p>
             </div>
           </section>

@@ -20,16 +20,15 @@ function ConfirmationContent() {
                 </svg>
               </div>
 
-              <h1 className="text-3xl font-semibold text-ink">Booking confirmed</h1>
+              <h1 className="text-3xl font-semibold text-ink">Request received</h1>
 
               {sessionId ? (
                 <p className="mt-5 text-ink-muted leading-7">
-                  Your payment was successful and your consultation has been booked.
-                  Check your email for a confirmation with next steps.
+                  Your payment was successful. We&apos;ll be in touch with the next steps for your project.
                 </p>
               ) : (
                 <p className="mt-5 text-ink-muted leading-7">
-                  Your booking has been received. Check your email for confirmation details.
+                  Your discovery brief has been received. Check your email for details about your free call.
                 </p>
               )}
 
@@ -45,7 +44,7 @@ function ConfirmationContent() {
                     href="/booking"
                     className="text-sm text-brand hover:text-brand-dark transition"
                   >
-                    Book another consultation
+                    Submit another project brief
                   </Link>
                 </div>
               </div>
