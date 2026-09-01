@@ -12,7 +12,8 @@
 		"binding": "ASSETS"
 	},
 	"vars": {
-		"STRIPE_PAYMENT_LINK_URL": "https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000"
+		"STRIPE_PAYMENT_LINK_URL": "https://buy.stripe.com/7sY8wP2GtdE87zhfpFes000",
+		"EMAIL_FROM": "Evrybady Digital <hello@evrybady.digital>"
 	},
 	"services": [
 		{

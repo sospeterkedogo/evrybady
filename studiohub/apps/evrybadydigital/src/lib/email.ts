@@ -14,8 +14,12 @@ export async function sendEmail(payload: MailPayload) {
   const from = payload.from || DEFAULT_FROM;
 
   if (!apiKey) {
-    console.info('[email] RESEND_API_KEY not configured; skipping send.', payload.subject);
-    return { ok: true, skipped: true };
+    console.error(
+      '[email] RESEND_API_KEY not configured; skipping send. ' +
+        'Set RESEND_API_KEY as a wrangler secret to enable production email.',
+      payload.subject,
+    );
+    return { ok: false, skipped: true, error: 'RESEND_API_KEY not configured' };
   }
 
   try {

@@ -108,9 +108,8 @@ export default function Navbar() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3 sm:px-6 lg:px-10">
-          <Link href="/" className="flex items-center gap-2.5">
-            <img src="/LOGO.png" alt="EvryBady logo" className="h-9 w-auto rounded-md object-contain" />
-            <span className="font-semibold tracking-[0.18em] text-brand">EVRYBADY</span>
+          <Link href="/" className="flex items-center">
+            <img src="/LOGO.png" alt="EvryBady logo" className="h-14 w-auto rounded-md object-contain" />
           </Link>
 
           {/* Desktop links */}

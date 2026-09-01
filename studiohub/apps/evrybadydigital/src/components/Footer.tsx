@@ -60,8 +60,7 @@ export default function Footer() {
           {/* Brand column */}
           <div className="space-y-4 sm:col-span-2 md:col-span-1 lg:col-span-1">
             <div className="flex items-center gap-2">
-              <img src="/LOGO.png" alt="EvryBady logo" className="h-8 w-auto rounded object-contain" />
-              <span className="font-semibold tracking-[0.16em] text-brand text-sm">EVRYBADY</span>
+              <img src="/LOGO.png" alt="EvryBady logo" className="h-12 w-auto rounded object-contain" />
             </div>
             <p className="text-sm text-ink-muted leading-6 max-w-xs">{brand}</p>
             {address && <p className="text-xs text-ink-faint">{address}</p>}

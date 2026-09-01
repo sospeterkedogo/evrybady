@@ -5,6 +5,10 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { services } from '@/lib/services';
 
+// Keep the booking flow dynamic so the deployed Worker never serves a stale
+// prerendered form after a release.
+export const dynamic = 'force-dynamic';
+
 function BookingContent() {
   const searchParams = useSearchParams();
   const cancelled = searchParams.get('cancelled') === '1';
