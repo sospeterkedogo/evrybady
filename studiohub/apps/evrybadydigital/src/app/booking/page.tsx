@@ -314,7 +314,7 @@ function BookingContent() {
         )}
 
         {/* CTA section at bottom */}
-        {selectedServices.length === 0 && (
+        {selectedServices.length === 0 && !freeSubmitted && (
           <section className="pb-24 lg:pb-32">
             <div className="rounded-3xl border border-gray-200 bg-surface-alt p-10 text-center shadow-md shadow-black/5 md:p-16">
               <p className="text-sm uppercase tracking-[0.4em] text-brand">Not sure what you need?</p>
